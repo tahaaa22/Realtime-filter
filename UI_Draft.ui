@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>992</width>
-    <height>569</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Realtime Digital Filter</string>
   </property>
   <property name="styleSheet">
    <string notr="true">color: white;
@@ -294,7 +294,7 @@ QTabBar::tab {
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="design_tab">
        <property name="palette">
@@ -1058,7 +1058,7 @@ QTabBar::tab {
        </attribute>
        <layout class="QGridLayout" name="gridLayout_7">
         <item row="0" column="0">
-         <widget class="QGroupBox" name="">
+         <widget class="QGroupBox" name="groupBox">
           <property name="styleSheet">
            <string notr="true">QGroupBox::pane {
     border: none;
@@ -1758,5 +1758,38 @@ QTabBar::tab {
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>mag_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>mag_LCD</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>481</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>phase_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>phase_LCD</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>526</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>525</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
