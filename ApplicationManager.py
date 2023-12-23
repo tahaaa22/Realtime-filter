@@ -3,7 +3,7 @@ from scipy.signal import freqz
 
 #TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
 #TODO: taha check for repetition after finishing all the todos
-#TODO: taha check why function clear and reset together need to action to work not only one action and also check if there is problem when switching
+#TODO: taha check why function clear and reset together need two actions to work not only one action and also check if there is problem when switching
 class AppManager:
     def __init__(self, ui):
         self.UI = ui
@@ -93,5 +93,5 @@ class AppManager:
         # Plot phase response
         self.UI.Phase_graph.plot(w, np.degrees(phase_response))
 
-            
+              
 

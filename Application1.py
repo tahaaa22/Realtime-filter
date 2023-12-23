@@ -1018,7 +1018,7 @@ class Ui_Application(object):
 
     def retranslateUi(self, Application):
         _translate = QtCore.QCoreApplication.translate
-        Application.setWindowTitle(_translate("Application", "MainWindow"))
+        Application.setWindowTitle(_translate("Application", "RealTime-filter"))
         self.label.setText(_translate("Application", "Realtime Digital Filter"))
         #self.label_3.setText(_translate("Application", "Z - Pole"))
         self.label_5.setText(_translate("Application", "Zeros-poles placement:"))
@@ -1039,7 +1039,7 @@ class Ui_Application(object):
         self.label_4.setText(_translate("Application", "Phase Response"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.design_tab), _translate("Application", "Design"))
         self.label_14.setText(_translate("Application", "Z - Pole"))
-        self.label_13.setText(_translate("Application", "Magnitude Response"))
+        self.label_13.setText(_translate("Application", "Phase Response"))
         self.label_16.setText(_translate("Application", "Corrected Phase"))
         self.lineEdit.setPlaceholderText(_translate("Application", "enter arbitary \'a\'"))
         self.apply_custom_filter.setText(_translate("Application", "Apply"))
