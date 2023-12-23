@@ -8,14 +8,16 @@ class Filter:
         self.zeros = []
         self.poles = []
 
-
-class Zeros:
-    def __init__(self):
-        self.x = None
-        self.y = None
+        
 
 
-class Poles:
-    def __init__(self):
-        self.x = None
-        self.y = None
+class Zero:
+    def __init__(self,coordinates,  conj = False):
+        self.coordinates = coordinates
+        self.has_conjugate= conj
+    
+    
+class Pole:
+    def __init__(self,coordinates,  conj = False):
+        self.coordinates = coordinates
+        self.has_conjugate= conj
