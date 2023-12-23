@@ -1,17 +1,16 @@
-from pyqtgraph import PlotWidget
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+from pyqtgraph import PlotWidget
 import sys
 from ApplicationManager import AppManager
 
-
 class Ui_Application(object):
-   
-        
-       
-        
     def setupUi(self, Application):
         Application.setObjectName("Application")
         Application.resize(994, 624)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Assets/WindowIcon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Application.setWindowIcon(icon)
         Application.setStyleSheet("color: rgb(255, 255, 255);\n"
 "background-color: #1e1e2f;\n"
 "")
@@ -234,6 +233,9 @@ class Ui_Application(object):
         sizePolicy.setHeightForWidth(self.Zplane_box.sizePolicy().hasHeightForWidth())
         self.Zplane_box.setSizePolicy(sizePolicy)
         self.Zplane_box.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.Zplane_box.setFont(font)
         self.Zplane_box.setStyleSheet("QGroupBox {\n"
 "background-color: #1e1e2f;\n"
 "border: 1.2px solid #ffffff;\n"
@@ -252,17 +254,6 @@ class Ui_Application(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        # self.label_3 = QtWidgets.QLabel(self.Zplane_box)
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        # sizePolicy.setHorizontalStretch(0)
-        # sizePolicy.setVerticalStretch(0)
-        # sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
-        # self.label_3.setSizePolicy(sizePolicy)
-        # font = QtGui.QFont()
-        # font.setPointSize(10)
-        # self.label_3.setFont(font)
-        # self.label_3.setObjectName("label_3")
-        #self.horizontalLayout_2.addWidget(self.label_3)
         spacerItem2 = QtWidgets.QSpacerItem(188, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
@@ -277,12 +268,15 @@ class Ui_Application(object):
         self.verticalLayout_4.addWidget(self.z_plane)
         self.verticalLayout_3.addWidget(self.Zplane_box)
         self.preferenceBox = QtWidgets.QGroupBox(self.design_box)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.preferenceBox.sizePolicy().hasHeightForWidth())
         self.preferenceBox.setSizePolicy(sizePolicy)
-        self.preferenceBox.setMaximumSize(QtCore.QSize(16777213, 200))
+        self.preferenceBox.setMaximumSize(QtCore.QSize(800, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.preferenceBox.setFont(font)
         self.preferenceBox.setStyleSheet("QGroupBox {\n"
 "background-color: #1e1e2f;\n"
 "border: 1.2px solid #ffffff;\n"
@@ -296,22 +290,61 @@ class Ui_Application(object):
 "    color: rgb(255, 255, 255);\n"
 "}")
         self.preferenceBox.setObjectName("preferenceBox")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.preferenceBox)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.label_5 = QtWidgets.QLabel(self.preferenceBox)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_5.setFont(font)
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout_2.addWidget(self.label_5)
-        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.gridLayout_9 = QtWidgets.QGridLayout(self.preferenceBox)
+        self.gridLayout_9.setObjectName("gridLayout_9")
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        spacerItem3 = QtWidgets.QSpacerItem(40, 6, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem3)
+        self.gridLayout_9.addLayout(self.horizontalLayout_6, 0, 0, 1, 1)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.zeros_radioButton = QtWidgets.QRadioButton(self.preferenceBox)
+        self.zeros_radioButton.setStyleSheet("background-color: #784B84;\n"
+"      color: white;\n"
+"      border: none;\n"
+"      padding: 5px 10px;\n"
+"     border: 1.2px solid white;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.zeros_radioButton.setObjectName("zeros_radioButton")
+        self.horizontalLayout_5.addWidget(self.zeros_radioButton)
+        self.pole_radioButton = QtWidgets.QRadioButton(self.preferenceBox)
+        self.pole_radioButton.setStyleSheet("background-color: #784B84;\n"
+"      color: white;\n"
+"      border: none;\n"
+"      padding: 5px 10px;\n"
+"     border: 1.2px solid white;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.pole_radioButton.setObjectName("pole_radioButton")
+        self.horizontalLayout_5.addWidget(self.pole_radioButton)
+        self.gridLayout_9.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
+        self.groupbox = QtWidgets.QGroupBox(self.preferenceBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupbox.sizePolicy().hasHeightForWidth())
+        self.groupbox.setSizePolicy(sizePolicy)
+        self.groupbox.setStyleSheet("QGroupBox {\n"
+"background-color: #1e1e2f;\n"
+"}\n"
+"background-color: #784B84;\n"
+"      color: white;\n"
+"      border: none;\n"
+"      padding: 5px 10px;\n"
+"     border: 1.2px solid white;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.groupbox.setObjectName("groupbox")
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.groupbox)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_6 = QtWidgets.QLabel(self.preferenceBox)
+        self.label_6 = QtWidgets.QLabel(self.groupbox)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout_4.addWidget(self.label_6)
-        self.Clear_combobox = QtWidgets.QComboBox(self.preferenceBox)
+        self.Clear_combobox = QtWidgets.QComboBox(self.groupbox)
         self.Clear_combobox.setEditable(True)
         self.Clear_combobox.setObjectName("Clear_combobox")
         self.Clear_combobox.addItem("")
@@ -320,7 +353,7 @@ class Ui_Application(object):
         self.Clear_combobox.addItem("")
         self.horizontalLayout_4.addWidget(self.Clear_combobox)
         self.horizontalLayout_9.addLayout(self.horizontalLayout_4)
-        self.confirm_button = QtWidgets.QPushButton(self.preferenceBox)
+        self.confirm_button = QtWidgets.QPushButton(self.groupbox)
         self.confirm_button.setMaximumSize(QtCore.QSize(86, 16777215))
         self.confirm_button.setStyleSheet("background-color: #00A86B;\n"
 "      color: white;\n"
@@ -331,48 +364,20 @@ class Ui_Application(object):
 "border-radius: 8px;")
         self.confirm_button.setObjectName("confirm_button")
         self.horizontalLayout_9.addWidget(self.confirm_button)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_9)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.zeros_button = QtWidgets.QRadioButton(self.preferenceBox)
-        self.zeros_button.setObjectName("zeros_button")
-        self.horizontalLayout_5.addWidget(self.zeros_button)
-        self.pole_button = QtWidgets.QRadioButton(self.preferenceBox)
-        self.pole_button.setObjectName("pole_button")
-        self.horizontalLayout_5.addWidget(self.pole_button)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.label_7 = QtWidgets.QLabel(self.preferenceBox)
-        self.label_7.setObjectName("label_7")
-        self.horizontalLayout_6.addWidget(self.label_7)
-        self.mag_slider = QtWidgets.QSlider(self.preferenceBox)
-        self.mag_slider.setOrientation(QtCore.Qt.Horizontal)
-        self.mag_slider.setObjectName("mag_slider")
-        self.horizontalLayout_6.addWidget(self.mag_slider)
-        self.mag_LCD = QtWidgets.QLCDNumber(self.preferenceBox)
-        self.mag_LCD.setObjectName("mag_LCD")
-        self.horizontalLayout_6.addWidget(self.mag_LCD)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_6)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.label_8 = QtWidgets.QLabel(self.preferenceBox)
-        self.label_8.setObjectName("label_8")
-        self.horizontalLayout_7.addWidget(self.label_8)
-        self.phase_slider = QtWidgets.QSlider(self.preferenceBox)
-        self.phase_slider.setOrientation(QtCore.Qt.Horizontal)
-        self.phase_slider.setObjectName("phase_slider")
-        self.horizontalLayout_7.addWidget(self.phase_slider)
-        self.phase_LCD = QtWidgets.QLCDNumber(self.preferenceBox)
-        self.phase_LCD.setObjectName("phase_LCD")
-        self.horizontalLayout_7.addWidget(self.phase_LCD)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_7)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.gridLayout_9.addWidget(self.groupbox, 2, 0, 1, 1)
+        self.groupbox1 = QtWidgets.QGroupBox(self.preferenceBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupbox1.sizePolicy().hasHeightForWidth())
+        self.groupbox1.setSizePolicy(sizePolicy)
+        self.groupbox1.setObjectName("groupbox1")
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.groupbox1)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.label_9 = QtWidgets.QLabel(self.preferenceBox)
+        self.label_9 = QtWidgets.QLabel(self.groupbox1)
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_8.addWidget(self.label_9)
-        self.add_conjugates = QtWidgets.QPushButton(self.preferenceBox)
+        self.add_conjugates = QtWidgets.QPushButton(self.groupbox1)
         self.add_conjugates.setStyleSheet("background-color: #00A86B;\n"
 "    color: white;\n"
 "    border: none;\n"
@@ -382,7 +387,7 @@ class Ui_Application(object):
 "border-radius: 8px;")
         self.add_conjugates.setObjectName("add_conjugates")
         self.horizontalLayout_8.addWidget(self.add_conjugates)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_8)
+        self.gridLayout_9.addWidget(self.groupbox1, 3, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.preferenceBox)
         self.horizontalLayout_10.addLayout(self.verticalLayout_3)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
@@ -393,6 +398,9 @@ class Ui_Application(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.magBox.sizePolicy().hasHeightForWidth())
         self.magBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.magBox.setFont(font)
         self.magBox.setStyleSheet("QGroupBox {\n"
 "background-color: #1e1e2f;\n"
 "border: 1.2px solid #ffffff;\n"
@@ -410,16 +418,15 @@ class Ui_Application(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label_2 = QtWidgets.QLabel(self.magBox)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
-        spacerItem3 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(88, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem4)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.Magnitude_graph = PlotWidget(self.magBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Magnitude_graph.sizePolicy().hasHeightForWidth())
+        self.Magnitude_graph.setSizePolicy(sizePolicy)
         self.Magnitude_graph.setObjectName("Magnitude_graph")
         self.verticalLayout.addWidget(self.Magnitude_graph)
         self.verticalLayout_5.addWidget(self.magBox)
@@ -429,6 +436,9 @@ class Ui_Application(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.phasebox.sizePolicy().hasHeightForWidth())
         self.phasebox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.phasebox.setFont(font)
         self.phasebox.setStyleSheet("QGroupBox {\n"
 "background-color: #1e1e2f;\n"
 "border: 1.2px solid #ffffff;\n"
@@ -446,16 +456,15 @@ class Ui_Application(object):
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_4 = QtWidgets.QLabel(self.phasebox)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_4.setFont(font)
-        self.label_4.setObjectName("label_4")
-        self.horizontalLayout_3.addWidget(self.label_4)
-        spacerItem4 = QtWidgets.QSpacerItem(118, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem4)
+        spacerItem5 = QtWidgets.QSpacerItem(118, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem5)
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
         self.Phase_graph = PlotWidget(self.phasebox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Phase_graph.sizePolicy().hasHeightForWidth())
+        self.Phase_graph.setSizePolicy(sizePolicy)
         self.Phase_graph.setObjectName("Phase_graph")
         self.verticalLayout_6.addWidget(self.Phase_graph)
         self.verticalLayout_5.addWidget(self.phasebox)
@@ -586,8 +595,8 @@ class Ui_Application(object):
         self.label_14.setFont(font)
         self.label_14.setObjectName("label_14")
         self.horizontalLayout_16.addWidget(self.label_14)
-        spacerItem5 = QtWidgets.QSpacerItem(188, 5, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_16.addItem(spacerItem5)
+        spacerItem6 = QtWidgets.QSpacerItem(188, 5, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_16.addItem(spacerItem6)
         self.verticalLayout_11.addLayout(self.horizontalLayout_16)
         self.z_plane_2 = PlotWidget(self.Zplane_box_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -628,8 +637,8 @@ class Ui_Application(object):
         self.label_13.setFont(font)
         self.label_13.setObjectName("label_13")
         self.horizontalLayout_17.addWidget(self.label_13)
-        spacerItem6 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_17.addItem(spacerItem6)
+        spacerItem7 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_17.addItem(spacerItem7)
         self.verticalLayout_10.addLayout(self.horizontalLayout_17)
         self.Magnitude_graph_2 = PlotWidget(self.mag_box)
         self.Magnitude_graph_2.setObjectName("Magnitude_graph_2")
@@ -664,8 +673,8 @@ class Ui_Application(object):
         self.label_16.setFont(font)
         self.label_16.setObjectName("label_16")
         self.horizontalLayout_19.addWidget(self.label_16)
-        spacerItem7 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_19.addItem(spacerItem7)
+        spacerItem8 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_19.addItem(spacerItem8)
         self.verticalLayout_12.addLayout(self.horizontalLayout_19)
         self.corrected_phase = PlotWidget(self.phase_box)
         self.corrected_phase.setObjectName("corrected_phase")
@@ -693,9 +702,9 @@ class Ui_Application(object):
         self.customBox.setObjectName("customBox")
         self.horizontalLayout_20 = QtWidgets.QHBoxLayout(self.customBox)
         self.horizontalLayout_20.setObjectName("horizontalLayout_20")
-        self.lineEdit = QtWidgets.QLineEdit(self.customBox)
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout_20.addWidget(self.lineEdit)
+        self.custom_filter_text = QtWidgets.QLineEdit(self.customBox)
+        self.custom_filter_text.setObjectName("custom_filter_text")
+        self.horizontalLayout_20.addWidget(self.custom_filter_text)
         self.apply_custom_filter = QtWidgets.QPushButton(self.customBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -880,8 +889,8 @@ class Ui_Application(object):
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem8 = QtWidgets.QSpacerItem(88, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem8)
+        spacerItem9 = QtWidgets.QSpacerItem(88, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem9)
         self.verticalLayout_7.addLayout(self.horizontalLayout_12)
         self.real_signal = PlotWidget(self.RealBox)
         self.real_signal.setObjectName("real_signal")
@@ -916,8 +925,8 @@ class Ui_Application(object):
         self.gridLayout_3.addWidget(self.filtered_signal, 1, 0, 1, 1)
         self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        spacerItem9 = QtWidgets.QSpacerItem(88, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_13.addItem(spacerItem9)
+        spacerItem10 = QtWidgets.QSpacerItem(88, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_13.addItem(spacerItem10)
         self.gridLayout_3.addLayout(self.horizontalLayout_13, 0, 0, 1, 1)
         self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
@@ -956,32 +965,58 @@ class Ui_Application(object):
         self.gridLayout_8 = QtWidgets.QGridLayout(self.loadingBox)
         self.gridLayout_8.setObjectName("gridLayout_8")
         self.horizontalLayout_22 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_22.setContentsMargins(2, -1, -1, -1)
+        self.horizontalLayout_22.setSpacing(8)
         self.horizontalLayout_22.setObjectName("horizontalLayout_22")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout()
         self.verticalLayout_8.setObjectName("verticalLayout_8")
-        spacerItem10 = QtWidgets.QSpacerItem(394, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
-        self.verticalLayout_8.addItem(spacerItem10)
-        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_15.setContentsMargins(0, -1, 60, -1)
-        self.horizontalLayout_15.setSpacing(0)
-        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
-        self.load_button = QtWidgets.QRadioButton(self.loadingBox)
-        self.load_button.setMaximumSize(QtCore.QSize(156, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.load_button.setFont(font)
-        self.load_button.setObjectName("load_button")
-        self.horizontalLayout_15.addWidget(self.load_button)
-        self.touch_pad_button = QtWidgets.QRadioButton(self.loadingBox)
-        self.touch_pad_button.setMaximumSize(QtCore.QSize(156, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.touch_pad_button.setFont(font)
-        self.touch_pad_button.setObjectName("touch_pad_button")
-        self.horizontalLayout_15.addWidget(self.touch_pad_button)
-        self.verticalLayout_8.addLayout(self.horizontalLayout_15)
         spacerItem11 = QtWidgets.QSpacerItem(394, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
         self.verticalLayout_8.addItem(spacerItem11)
+        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_15.setContentsMargins(0, -1, 32, -1)
+        self.horizontalLayout_15.setSpacing(0)
+        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
+        self.load_radioButton = QtWidgets.QRadioButton(self.loadingBox)
+        self.load_radioButton.setMaximumSize(QtCore.QSize(179, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.load_radioButton.setFont(font)
+        self.load_radioButton.setStyleSheet("background-color: #784B84;\n"
+"      color: white;\n"
+"      border: none;\n"
+"      padding: 5px 10px;\n"
+"     border: 1.2px solid white;\n"
+"margin-right: 10px;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.load_radioButton.setObjectName("load_radioButton")
+        self.horizontalLayout_15.addWidget(self.load_radioButton)
+        self.touch_pad_radioButton = QtWidgets.QRadioButton(self.loadingBox)
+        self.touch_pad_radioButton.setMaximumSize(QtCore.QSize(181, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.touch_pad_radioButton.setFont(font)
+        self.touch_pad_radioButton.setStyleSheet("background-color: #784B84;\n"
+"      color: white;\n"
+"      border: none;\n"
+"      padding: 5px 10px;\n"
+"     border: 1.2px solid white;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.touch_pad_radioButton.setObjectName("touch_pad_radioButton")
+        self.horizontalLayout_15.addWidget(self.touch_pad_radioButton)
+        self.verticalLayout_8.addLayout(self.horizontalLayout_15)
+        self.load_button = QtWidgets.QPushButton(self.loadingBox)
+        self.load_button.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.load_button.setStyleSheet("background-color: #784B84;\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 5px 10px;\n"
+"     border: 1.2px ;\n"
+"border-style: outset;\n"
+"border-radius: 8px;")
+        self.load_button.setObjectName("load_button")
+        self.verticalLayout_8.addWidget(self.load_button)
         self.horizontalLayout_22.addLayout(self.verticalLayout_8)
         self.touch_pad = QtWidgets.QGraphicsView(self.loadingBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -1009,39 +1044,35 @@ class Ui_Application(object):
         Application.setStatusBar(self.statusbar)
 
         self.retranslateUi(Application)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(2)
         self.Clear_combobox.setCurrentIndex(0)
-        self.mag_slider.valueChanged['int'].connect(self.mag_LCD.display) # type: ignore
-        self.phase_slider.valueChanged['int'].connect(self.phase_LCD.display) # type: ignore
         self.speed_slider.valueChanged['int'].connect(self.speed_LCD.display) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Application)
 
     def retranslateUi(self, Application):
         _translate = QtCore.QCoreApplication.translate
-        Application.setWindowTitle(_translate("Application", "MainWindow"))
+        Application.setWindowTitle(_translate("Application", "Realtime Filter Designer"))
         self.label.setText(_translate("Application", "Realtime Digital Filter"))
-        #self.label_3.setText(_translate("Application", "Z - Pole"))
-        self.label_5.setText(_translate("Application", "Zeros-poles placement:"))
+        self.Zplane_box.setTitle(_translate("Application", "Z - Pole"))
+        self.preferenceBox.setTitle(_translate("Application", "Zeros-poles placement:"))
+        self.zeros_radioButton.setText(_translate("Application", "Zeros"))
+        self.pole_radioButton.setText(_translate("Application", "Poles"))
         self.label_6.setText(_translate("Application", "Clear:"))
         self.Clear_combobox.setCurrentText(_translate("Application", "all zeros"))
         self.Clear_combobox.setItemText(0, _translate("Application", "all zeros"))
         self.Clear_combobox.setItemText(1, _translate("Application", "all poles"))
-        self.Clear_combobox.setItemText(2, _translate("Application", "clear all"))
+        self.Clear_combobox.setItemText(2, _translate("Application", "all"))
         self.Clear_combobox.setItemText(3, _translate("Application", "current"))
         self.confirm_button.setText(_translate("Application", "Confirm"))
-        self.zeros_button.setText(_translate("Application", "Zeros"))
-        self.pole_button.setText(_translate("Application", "Poles"))
-        self.label_7.setText(_translate("Application", "magnitude:"))
-        self.label_8.setText(_translate("Application", "Phase:"))
         self.label_9.setText(_translate("Application", "Conjugates:"))
         self.add_conjugates.setText(_translate("Application", "Add"))
-        self.label_2.setText(_translate("Application", "Magnitude Response"))
-        self.label_4.setText(_translate("Application", "Phase Response"))
+        self.magBox.setTitle(_translate("Application", "Magnitude Response"))
+        self.phasebox.setTitle(_translate("Application", "Phase Response"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.design_tab), _translate("Application", "Design"))
         self.label_14.setText(_translate("Application", "Z - Pole"))
-        self.label_13.setText(_translate("Application", "Magnitude Response"))
+        self.label_13.setText(_translate("Application", "Phase Response"))
         self.label_16.setText(_translate("Application", "Corrected Phase"))
-        self.lineEdit.setPlaceholderText(_translate("Application", "enter arbitary \'a\'"))
+        self.custom_filter_text.setPlaceholderText(_translate("Application", "enter arbitary \'a\'"))
         self.apply_custom_filter.setText(_translate("Application", "Apply"))
         self.label_15.setText(_translate("Application", "Choose Filter:"))
         self.filter_combobox.setItemText(0, _translate("Application", "New Item"))
@@ -1057,8 +1088,9 @@ class Ui_Application(object):
         self.FilteredBox.setTitle(_translate("Application", "Filtered Signal"))
         self.label_12.setText(_translate("Application", "Speed"))
         self.loadingBox.setTitle(_translate("Application", "Preferences"))
-        self.load_button.setText(_translate("Application", "Load Signal"))
-        self.touch_pad_button.setText(_translate("Application", "Touch Pad"))
+        self.load_radioButton.setText(_translate("Application", "Load Signal  "))
+        self.touch_pad_radioButton.setText(_translate("Application", "Touch Pad"))
+        self.load_button.setText(_translate("Application", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results_tab), _translate("Application", "Results"))
 
 
@@ -1072,9 +1104,8 @@ if __name__ == "__main__":
     Maestro.plot_unit_circle()
     #TODO: there is a repetition that is not needed in the future fix the bug and remove it (taha)
     #NOTE: DONOT DELETE ANY THING (team)
-    ui.zeros_button.toggled.connect(Maestro.reset_sliders)
-    ui.pole_button.toggled.connect(Maestro.reset_sliders)
-    ui.mag_slider.valueChanged.connect(Maestro.add_zeros_poles)
+    ui.zeros_radioButton.toggled.connect(Maestro.reset_sliders)
+    ui.pole_radioButton.toggled.connect(Maestro.reset_sliders)
     ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
     ui.confirm_button.clicked.connect(Maestro.clear_placement)
     ui.confirm_button.clicked.connect(Maestro.reset_sliders)
