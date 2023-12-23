@@ -34,6 +34,8 @@ class Filter:
 
 
     def calculate_frequency_response(self):
+        if len(self.zeros) == 0 and len(self.poles) == 0:
+            return
         self.frequencies, self.complex_frequencies = freqz(np.poly(list(self.zeros)), np.poly(list(self.poles)), worN=8000)
         self.mag_response = np.abs(self.complex_frequencies)
         self.phase_response = np.angle(self.complex_frequencies)

@@ -18,13 +18,12 @@ class AppManager:
         x = np.cos(theta)
         y = np.sin(theta)
 
-        # Plot the unit circle
         self.UI.z_plane.plot(x, y)
         # Draw vertical and horizontal lines passing through the center
         self.UI.z_plane.plot([0, 0], [-1, 1])
         self.UI.z_plane.plot([-1, 1], [0, 0])
-        # self.UI.z_plane.plot([zero.coordinates.real for zero in self.zeros], [zero.coordinates.imag for zero in self.zeros], pen=None, symbol='o', symbolSize=10)
-        # self.UI.z_plane.plot([pole.coordinates.real for pole in self.poles], [pole.coordinates.imag for pole in self.poles], pen=None, symbol='x', symbolSize=10)
+        self.UI.z_plane.plot([zero.coordinates.real for zero in self.designed_filter.zeros], [zero.coordinates.imag for zero in self.designed_filter.zeros], pen=None, symbol='o', symbolSize=10)
+        self.UI.z_plane.plot([pole.coordinates.real for pole in self.designed_filter.poles], [pole.coordinates.imag for pole in self.designed_filter.poles], pen=None, symbol='x', symbolSize=10)
 
         self.UI.z_plane.setAspectLocked(True)
 
@@ -32,14 +31,16 @@ class AppManager:
         self.UI.z_plane_2.plot([0, 0], [-1, 1])
         self.UI.z_plane_2.plot([-1, 1], [0, 0])
         self.UI.z_plane_2.setAspectLocked(True)
-        self.designed_filter.plot_mag_response()
-        self.designed_filter.plot_phase_response()
+        #self.designed_filter.calculate_frequency_response()
+        #self.plot_response('D', self.designed_filter)
 
-    def add_zeros_poles(self):
+    def add_zeros_poles(self, x, y):
         if self.UI.zeros_radioButton.isChecked():
-            self.designed_filter.add_zero_pole('z', 0.5 + 0.5j)
+            temp_zero = Zero(x + y * 1j)
+            self.designed_filter.add_zero_pole('z', temp_zero)
         else:
-            self.designed_filter.add_zero_pole('p', 0.5 + 0.5j)
+            temp_pole = Pole(x + y * 1j)
+            self.designed_filter.add_zero_pole('p', temp_pole)
         self.plot_unit_circle()
 
     def add_conjugates(self):
@@ -62,6 +63,8 @@ class AppManager:
     #     self.plot_unit_circle()
 
     def plot_response(self, tab : str, filter_obj : Filter):
+        if filter_obj.frequencies is None:
+            return
         if tab == 'D':
             self.UI.Magnitude_graph.clear()
             self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')

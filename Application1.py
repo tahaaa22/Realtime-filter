@@ -3,9 +3,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget
 import sys
 from ApplicationManager import AppManager
-import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
-from ApplicationManager import *
+
 
 class PlotWidget1(PlotWidget):
     def __init__(self, parent = None):
@@ -18,7 +17,7 @@ class PlotWidget1(PlotWidget):
         pos = event.scenePos()
         data_pos = plot_item.vb.mapSceneToView(pos)
         self.cursor_x_coordinates,  self.cursor_y_coordinates = data_pos.x(), data_pos.y()
-        self.Maestro.add_zeros_poles(self.cursor_x_coordinates,self.cursor_y_coordinates)
+        self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
 
 class Ui_Application(object):
     def __init__(self):
