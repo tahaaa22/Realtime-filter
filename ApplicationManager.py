@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.signal import freqz
 
-#TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
-#TODO: taha check for repetition after finishing all the todos
-#TODO: taha check why function clear and reset together need to action to work not only one action and also check if there is problem when switching
+
+# TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
+# TODO: taha check for repetition after finishing all the todos
+# TODO: taha check why function clear and reset together need two actions to work not only one action and also check if there is problem when switching
 class AppManager:
     def __init__(self, ui):
         self.UI = ui
@@ -13,8 +14,6 @@ class AppManager:
         self.zeros = []
         self.poles_conjugates = []
         self.zeros_conjugates = []
-
-
 
     def plot_unit_circle(self):
         self.UI.z_plane.clear()
@@ -34,29 +33,29 @@ class AppManager:
         self.plot_frequency_response()
 
     def add_zeros_poles(self):
-        #TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
+        # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
         if self.UI.zeros_button.isChecked():
             mag = self.UI.mag_slider.value()
             phase = self.UI.phase_slider.value()
-            self.zeros.append(0.5 + 0.5j) # testing only do not delete
+            self.zeros.append(0.5 + 0.5j)  # testing only do not delete
             self.plot_unit_circle()
         elif self.UI.pole_button.isChecked():
             mag = self.UI.mag_slider.value()
             phase = self.UI.phase_slider.value()
-            self.poles.append(-0.5 - 0.5j) # testing only do not delete
+            self.poles.append(-0.5 - 0.5j)  # testing only do not delete
             self.plot_unit_circle()
-            
+
     def add_conjugates(self):
-       self.poles_conjugates = np.conjugate(self.poles)
-       self.zeros_conjugates = np.conjugate(self.zeros)
-       self.plot_unit_circle()
-    
+        self.poles_conjugates = np.conjugate(self.poles)
+        self.zeros_conjugates = np.conjugate(self.zeros)
+        self.plot_unit_circle()
+
     def reset_sliders(self):
         self.UI.mag_slider.setValue(0)
         self.UI.phase_slider.setValue(0)
         self.UI.mag_LCD.display(0)
         self.UI.phase_LCD.display(0)
-    
+
     def clear_placement(self):
         # Get the current text of the combo box
         current_text = self.UI.Clear_combobox.currentText()
@@ -69,9 +68,9 @@ class AppManager:
         # Clear the selected lists based on the current option
         for clear_list in clear_options.get(current_text, []):
             clear_list.clear()
-        #TODO: taha add current delete after finishing the highlighting functionality
+        # TODO: taha add current delete after finishing the highlighting functionality
         self.plot_unit_circle()
-        
+
     def plot_frequency_response(self):
         # Calculate frequency response
         w, h = freqz(np.poly(self.zeros), np.poly(self.poles), worN=8000)
@@ -92,6 +91,4 @@ class AppManager:
         self.UI.Phase_graph.addLegend()
         # Plot phase response
         self.UI.Phase_graph.plot(w, np.degrees(phase_response))
-
-            
 
