@@ -1,5 +1,3 @@
-import numpy as np
-from scipy.signal import freqz
 from Classes import *
 
 # TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
@@ -8,10 +6,9 @@ from Classes import *
 class AppManager:
     def __init__(self, ui):
         self.UI = ui
-        self.Filters = set()
-        # Create lists to store poles and zeros
-        self.poles = []
-        self.zeros = []
+        self.Filters = [] # Filter at index 0 will always be the main filter
+        self.designed_filter = Filter()
+        self.Filters.append(self.designed_filter)
         
 
     def plot_unit_circle(self):
@@ -21,71 +18,75 @@ class AppManager:
         x = np.cos(theta)
         y = np.sin(theta)
 
-        # Plot the unit circle
         self.UI.z_plane.plot(x, y)
-        # Plot poles and zeros
-        self.UI.z_plane.plot(np.real(self.poles), np.imag(self.poles), pen=None,symbol='x', symbolSize=10)
-        self.UI.z_plane.plot(np.real(self.zeros), np.imag(self.zeros), pen=None,symbol='o', symbolSize=10)
-        self.UI.z_plane.setAspectLocked(True)
-        self.plot_frequency_response()
+        # Draw vertical and horizontal lines passing through the center
+        self.UI.z_plane.plot([0, 0], [-1, 1])
+        self.UI.z_plane.plot([-1, 1], [0, 0])
+        self.UI.z_plane.plot([zero.coordinates.real for zero in self.designed_filter.zeros], [zero.coordinates.imag for zero in self.designed_filter.zeros], pen=None, symbol='o', symbolSize=10)
+        self.UI.z_plane.plot([pole.coordinates.real for pole in self.designed_filter.poles], [pole.coordinates.imag for pole in self.designed_filter.poles], pen=None, symbol='x', symbolSize=10)
 
-    def add_zeros_poles(self):
-        # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
+        self.UI.z_plane.setAspectLocked(True)
+
+        self.UI.z_plane_2.plot(x, y)
+        self.UI.z_plane_2.plot([0, 0], [-1, 1])
+        self.UI.z_plane_2.plot([-1, 1], [0, 0])
+        self.UI.z_plane_2.setAspectLocked(True)
+        #self.designed_filter.calculate_frequency_response()
+        #self.plot_response('D', self.designed_filter)
+
+    def add_zeros_poles(self, x, y):
         if self.UI.zeros_radioButton.isChecked():
-            zero = Zero(0.5 + 0.5j)
-            self.zeros.append(zero.coordinates)  # testing only do not delete
-            self.plot_unit_circle()
-        elif self.UI.pole_radioButton.isChecked():
-            zero = Zero(0.5 + 0.5j)
-            self.poles.append(-0.5 - 0.5j)  # testing only do not delete
-            self.plot_unit_circle()
+            temp_zero = Zero(x + y * 1j)
+            self.designed_filter.add_zero_pole('z', temp_zero)
+        else:
+            temp_pole = Pole(x + y * 1j)
+            self.designed_filter.add_zero_pole('p', temp_pole)
+        self.plot_unit_circle()
 
     def add_conjugates(self):
-        for pole in self.poles:
-            if not pole.has_conjugate:
-                pole.has_conjugate = True
-                pole_conj = Pole(np.conjugate(pole), True)
-                self.poles.append(pole_conj)
-        for zero in self.zeros:
-            if not zero.has_conjugate:
-                zero.has_conjugate = True
-                zer_conj = Zero(np.conjugate(zero), True)
-                self.zeros.append(zer_conj)
+        self.designed_filter.add_conjugates()
         self.plot_unit_circle()
 
-    def clear_placement(self):
-        # Get the current text of the combo box
-        current_text = self.UI.Clear_combobox.currentText()
-        # dictionary mapping options to lists
-        clear_options = {
-            "all zeros": (self.zeros),
-            "all poles": (self.poles),
-            "clear all": (self.zeros, self.poles)}
+    # def clear_placement(self):
+    #     # Get the current text of the combo box
+    #     current_text = self.UI.Clear_combobox.currentText()
+    #     # dictionary mapping options to lists
+    #     clear_options = {
+    #         "all zeros": (self.zeros),
+    #         "all poles": (self.poles),
+    #         "clear all": (self.zeros, self.poles)}
+    #
+    #     # Clear the selected lists based on the current option
+    #     for clear_list in clear_options.get(current_text, []):
+    #         clear_list.clear()
+    #     # TODO: taha add current delete after finishing the highlighting functionality
+    #     self.plot_unit_circle()
 
-        # Clear the selected lists based on the current option
-        for clear_list in clear_options.get(current_text, []):
-            clear_list.clear()
-        # TODO: taha add current delete after finishing the highlighting functionality
-        self.plot_unit_circle()
+    def plot_response(self, tab : str, filter_obj : Filter):
+        if filter_obj.frequencies is None:
+            return
+        if tab == 'D':
+            self.UI.Magnitude_graph.clear()
+            self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.Magnitude_graph.setLabel('left', 'Magnitude', units='dB')
+            self.UI.Magnitude_graph.addLegend()
+            self.UI.Phase_graph.clear()
+            self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.Phase_graph.setLabel('left', 'Phase', units='degrees')
+            self.UI.Phase_graph.addLegend()
+            self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
+            self.UI.Phase_graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
 
-    def plot_frequency_response(self):
-        # Calculate frequency response
-        w, h = freqz(np.poly(self.zeros), np.poly(self.poles), worN=8000)
-        # Extract magnitude and phase
-        magnitude_response = np.abs(h)
-        phase_response = np.angle(h)
-        self.UI.Magnitude_graph.clear()
-        self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
-        self.UI.Magnitude_graph.setLabel('left', 'Magnitude', units='dB')
-        self.UI.Magnitude_graph.addLegend()
-        # Plot magnitude response
-        self.UI.Magnitude_graph.plot(w, 20 * np.log10(magnitude_response))
+        else:
+            self.UI.Phase_Response_Graph.clear()
+            self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='degrees')
+            self.UI.Phase_Response_Graph.addLegend()
+            self.UI.corrected_phase.clear()
+            self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.corrected_phase.setLabel('left', 'Phase', units='degrees')
+            self.UI.corrected_phase.addLegend()
+            self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
 
-        # Create a new PlotWidget for the phase response
-        self.UI.Phase_graph.clear()
-        self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
-        self.UI.Phase_graph.setLabel('left', 'Phase', units='degrees')
-        self.UI.Phase_graph.addLegend()
-        # Plot phase response
-        self.UI.Phase_graph.plot(w, np.degrees(phase_response))
+
 
