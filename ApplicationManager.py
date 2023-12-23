@@ -25,22 +25,22 @@ class AppManager:
         self.UI.z_plane.plot(x, y)
         # Plot poles and zeros
         self.UI.z_plane.plot(np.real(self.poles), np.imag(self.poles), symbol='x', symbolSize=10)
-        self.UI.z_plane.plot(np.real(self.poles_conjugates), np.imag(self.poles_conjugates), symbol='x', symbolSize=10)
+       
         self.UI.z_plane.plot(np.real(self.zeros), np.imag(self.zeros), symbol='o', symbolSize=10)
-        self.UI.z_plane.plot(np.real(self.zeros_conjugates), np.imag(self.zeros_conjugates), symbol='o', symbolSize=10)
+       
         self.UI.z_plane.setAspectLocked(True)
         self.plot_frequency_response()
 
     def add_zeros_poles(self):
         # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
         if self.UI.zeros_button.isChecked():
-            mag = self.UI.mag_slider.value()
-            phase = self.UI.phase_slider.value()
+           
+            
             self.zeros.append(0.5 + 0.5j)  # testing only do not delete
             self.plot_unit_circle()
         elif self.UI.pole_button.isChecked():
-            mag = self.UI.mag_slider.value()
-            phase = self.UI.phase_slider.value()
+          
+           
             self.poles.append(-0.5 - 0.5j)  # testing only do not delete
             self.plot_unit_circle()
 
@@ -49,11 +49,6 @@ class AppManager:
         self.zeros_conjugates = np.conjugate(self.zeros)
         self.plot_unit_circle()
 
-    def reset_sliders(self):
-        self.UI.mag_slider.setValue(0)
-        self.UI.phase_slider.setValue(0)
-        self.UI.mag_LCD.display(0)
-        self.UI.phase_LCD.display(0)
 
     def clear_placement(self):
         # Get the current text of the combo box
