@@ -61,7 +61,7 @@ class AppManager:
     #     # TODO: taha add current delete after finishing the highlighting functionality
     #     self.plot_unit_circle()
 
-    def plot_response(self, tab : str, filter : Filter):
+    def plot_response(self, tab : str, filter_obj : Filter):
         if tab == 'D':
             self.UI.Magnitude_graph.clear()
             self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
@@ -71,17 +71,19 @@ class AppManager:
             self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
             self.UI.Phase_graph.setLabel('left', 'Phase', units='degrees')
             self.UI.Phase_graph.addLegend()
-            self.UI.Magnitude_graph.plot(filter.frequencies, 20 * np.log10(filter.mag_response))
-            self.UI.Phase_graph.plot(filter.frequencies, np.degrees(phase_response))
+            self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
+            self.UI.Phase_graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
 
         else:
-            pass
-
-
-        # Plot magnitude response
-
-
-        # Create a new PlotWidget for the phase response
+            self.UI.Phase_Response_Graph.clear()
+            self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='degrees')
+            self.UI.Phase_Response_Graph.addLegend()
+            self.UI.corrected_phase.clear()
+            self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
+            self.UI.corrected_phase.setLabel('left', 'Phase', units='degrees')
+            self.UI.corrected_phase.addLegend()
+            self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
 
 
 

@@ -32,14 +32,12 @@ class Filter:
                 zer_conj = Zero(np.conjugate(zero), True)
                 self.zeros.add(zer_conj)
 
-    def plot_phase_response(self):
-        #self.phase_response = np.angle(h)
-        pass
 
-    def plot_mag_response(self):
+    def calculate_frequency_response(self):
         self.frequencies, self.complex_frequencies = freqz(np.poly(list(self.zeros)), np.poly(list(self.poles)), worN=8000)
-        # Extract magnitude and phase
-        self.mag_response = np.abs(h)
+        self.mag_response = np.abs(self.complex_frequencies)
+        self.phase_response = np.angle(self.complex_frequencies)
+
 
 
 class Zero:
