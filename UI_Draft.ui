@@ -307,7 +307,7 @@ margin-left: 10px;
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="design_tab">
        <property name="palette">
@@ -572,30 +572,15 @@ QGroupBox::title  {
     color: rgb(255, 255, 255);
 }</string>
                </property>
+               <property name="title">
+                <string>Z - Pole</string>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
                   <property name="spacing">
                    <number>0</number>
                   </property>
-                  <item>
-                   <widget class="QLabel" name="label_3">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Z - Pole</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item>
                    <spacer name="horizontalSpacer">
                     <property name="orientation">
@@ -607,7 +592,7 @@ QGroupBox::title  {
                     <property name="sizeHint" stdset="0">
                      <size>
                       <width>188</width>
-                      <height>20</height>
+                      <height>6</height>
                      </size>
                     </property>
                    </spacer>
@@ -661,8 +646,8 @@ QGroupBox::title  {
     color: rgb(255, 255, 255);
 }</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <item>
+               <layout class="QGridLayout" name="gridLayout_9">
+                <item row="0" column="0">
                  <widget class="QLabel" name="label_5">
                   <property name="font">
                    <font>
@@ -674,7 +659,25 @@ QGroupBox::title  {
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="1" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QRadioButton" name="zeros_radioButton">
+                    <property name="text">
+                     <string>Zeros</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="pole_radioButton">
+                    <property name="text">
+                     <string>Poles</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item row="2" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_9">
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -744,67 +747,7 @@ border-radius: 8px;</string>
                   </item>
                  </layout>
                 </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <item>
-                   <widget class="QRadioButton" name="zeros_button">
-                    <property name="text">
-                     <string>Zeros</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="phase_button">
-                    <property name="text">
-                     <string>Poles</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_6">
-                  <item>
-                   <widget class="QLabel" name="label_7">
-                    <property name="text">
-                     <string>magnitude:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSlider" name="mag_slider">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLCDNumber" name="mag_LCD"/>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_7">
-                  <item>
-                   <widget class="QLabel" name="label_8">
-                    <property name="text">
-                     <string>Phase:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSlider" name="phase_slider">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLCDNumber" name="phase_LCD"/>
-                  </item>
-                 </layout>
-                </item>
-                <item>
+                <item row="3" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
                   <item>
                    <widget class="QLabel" name="label_9">
@@ -1310,7 +1253,7 @@ QGroupBox::title  {
                      </font>
                     </property>
                     <property name="text">
-                     <string>Magnitude Response</string>
+                     <string>Phase Response</string>
                     </property>
                    </widget>
                   </item>
@@ -1425,7 +1368,7 @@ QGroupBox::title  {
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_20">
               <item>
-               <widget class="QLineEdit" name="lineEdit">
+               <widget class="QLineEdit" name="custom_filter_text">
                 <property name="placeholderText">
                  <string>enter arbitary 'a'</string>
                 </property>
@@ -1994,7 +1937,7 @@ QGroupBox::title  {
                      <number>60</number>
                     </property>
                     <item>
-                     <widget class="QRadioButton" name="load_button">
+                     <widget class="QRadioButton" name="load_radioButton">
                       <property name="maximumSize">
                        <size>
                         <width>156</width>
@@ -2012,7 +1955,7 @@ QGroupBox::title  {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QRadioButton" name="touch_pad_button">
+                     <widget class="QRadioButton" name="touch_pad_radioButton">
                       <property name="maximumSize">
                        <size>
                         <width>156</width>
@@ -2032,20 +1975,26 @@ QGroupBox::title  {
                    </layout>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_12">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Maximum</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
+                   <widget class="QPushButton" name="load_button">
+                    <property name="maximumSize">
                      <size>
-                      <width>394</width>
-                      <height>20</height>
+                      <width>200</width>
+                      <height>16777215</height>
                      </size>
                     </property>
-                   </spacer>
+                    <property name="styleSheet">
+                     <string notr="true">background-color: #784B84;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+     border: 1.2px ;
+border-style: outset;
+border-radius: 8px;</string>
+                    </property>
+                    <property name="text">
+                     <string>Load</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -2104,38 +2053,6 @@ border-radius: 15px;</string>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>mag_slider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>mag_LCD</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>189</x>
-     <y>467</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>259</x>
-     <y>474</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>phase_slider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>phase_LCD</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>138</x>
-     <y>502</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>508</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>speed_slider</sender>
    <signal>valueChanged(int)</signal>
