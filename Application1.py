@@ -1,10 +1,29 @@
-
+from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget
 import sys
 from ApplicationManager import AppManager
+import pyqtgraph as pg
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from ApplicationManager import *
+
+class PlotWidget1(PlotWidget):
+    def __init__(self, parent = None):
+        super().__init__(parent= parent)
+        self.cursor_x_coordinates = 0
+        self.cursor_y_coordinates = 0
+        self.Maestro = None
+
+    def on_click(self, event, plot_item):
+        pos = event.scenePos()
+        data_pos = plot_item.vb.mapSceneToView(pos)
+        self.cursor_x_coordinates,  self.cursor_y_coordinates = data_pos.x(), data_pos.y()
+        self.Maestro.add_zeros_poles(self.cursor_x_coordinates,self.cursor_y_coordinates)
 
 class Ui_Application(object):
+    def __init__(self):
+        super().__init__()
+        
     def setupUi(self, Application):
         Application.setObjectName("Application")
         Application.resize(994, 624)
@@ -257,7 +276,9 @@ class Ui_Application(object):
         spacerItem2 = QtWidgets.QSpacerItem(188, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
-        self.z_plane = PlotWidget(self.Zplane_box)
+        self.z_plane = PlotWidget1(self.Zplane_box)
+        plotitem = self.z_plane.getPlotItem()
+        plotitem.scene().sigMouseClicked.connect(lambda event, item=plotitem : self.z_plane.on_click(event, item))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -421,7 +442,7 @@ class Ui_Application(object):
         spacerItem4 = QtWidgets.QSpacerItem(88, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.Magnitude_graph = PlotWidget(self.magBox)
+        self.Magnitude_graph = PlotWidget1(self.magBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -459,7 +480,7 @@ class Ui_Application(object):
         spacerItem5 = QtWidgets.QSpacerItem(118, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem5)
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
-        self.Phase_graph = PlotWidget(self.phasebox)
+        self.Phase_graph = PlotWidget1(self.phasebox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -598,7 +619,7 @@ class Ui_Application(object):
         spacerItem6 = QtWidgets.QSpacerItem(188, 5, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_16.addItem(spacerItem6)
         self.verticalLayout_11.addLayout(self.horizontalLayout_16)
-        self.z_plane_2 = PlotWidget(self.Zplane_box_2)
+        self.z_plane_2 = PlotWidget1(self.Zplane_box_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -640,7 +661,7 @@ class Ui_Application(object):
         spacerItem7 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_17.addItem(spacerItem7)
         self.verticalLayout_10.addLayout(self.horizontalLayout_17)
-        self.Magnitude_graph_2 = PlotWidget(self.mag_box)
+        self.Magnitude_graph_2 = PlotWidget1(self.mag_box)
         self.Magnitude_graph_2.setObjectName("Magnitude_graph_2")
         self.verticalLayout_10.addWidget(self.Magnitude_graph_2)
         self.horizontalLayout_21.addWidget(self.mag_box)
@@ -676,7 +697,7 @@ class Ui_Application(object):
         spacerItem8 = QtWidgets.QSpacerItem(88, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_19.addItem(spacerItem8)
         self.verticalLayout_12.addLayout(self.horizontalLayout_19)
-        self.corrected_phase = PlotWidget(self.phase_box)
+        self.corrected_phase = PlotWidget1(self.phase_box)
         self.corrected_phase.setObjectName("corrected_phase")
         self.verticalLayout_12.addWidget(self.corrected_phase)
         self.horizontalLayout_21.addWidget(self.phase_box)
@@ -892,7 +913,7 @@ class Ui_Application(object):
         spacerItem9 = QtWidgets.QSpacerItem(88, 5, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_12.addItem(spacerItem9)
         self.verticalLayout_7.addLayout(self.horizontalLayout_12)
-        self.real_signal = PlotWidget(self.RealBox)
+        self.real_signal = PlotWidget1(self.RealBox)
         self.real_signal.setObjectName("real_signal")
         self.verticalLayout_7.addWidget(self.real_signal)
         self.gridLayout_4.addWidget(self.RealBox, 0, 0, 1, 1)
@@ -920,7 +941,7 @@ class Ui_Application(object):
         self.FilteredBox.setObjectName("FilteredBox")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.FilteredBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.filtered_signal = PlotWidget(self.FilteredBox)
+        self.filtered_signal = PlotWidget1(self.FilteredBox)
         self.filtered_signal.setObjectName("filtered_signal")
         self.gridLayout_3.addWidget(self.filtered_signal, 1, 0, 1, 1)
         self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
@@ -1092,6 +1113,7 @@ class Ui_Application(object):
         self.touch_pad_radioButton.setText(_translate("Application", "Touch Pad"))
         self.load_button.setText(_translate("Application", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results_tab), _translate("Application", "Results"))
+        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -1099,6 +1121,7 @@ if __name__ == "__main__":
     ui = Ui_Application()
     ui.setupUi(Application)
     Maestro = AppManager(ui)
+    ui.z_plane.Maestro = Maestro
     Maestro.plot_unit_circle()
     #TODO: there is a repetition that is not needed in the future fix the bug and remove it (taha)
     #NOTE: DONOT DELETE ANY THING (team)

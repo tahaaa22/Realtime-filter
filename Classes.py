@@ -8,8 +8,6 @@ class Filter:
         self.zeros = []
         self.poles = []
 
-        
-
 
 class Zero:
     def __init__(self,coordinates,  conj = False):

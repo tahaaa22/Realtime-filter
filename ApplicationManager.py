@@ -20,25 +20,23 @@ class AppManager:
         theta = np.linspace(0, 2 * np.pi, 100)
         x = np.cos(theta)
         y = np.sin(theta)
-
         # Plot the unit circle
         self.UI.z_plane.plot(x, y)
         # Plot poles and zeros
-        
-        self.UI.z_plane.plot(np.real(self.poles), np.imag(self.poles), pen=None,symbol='x', symbolSize=10)
-        self.UI.z_plane.plot(np.real(self.zeros), np.imag(self.zeros), pen=None,symbol='o', symbolSize=10)
+        self.UI.z_plane.plot([zero.coordinates.real for zero in self.zeros], [zero.coordinates.imag for zero in self.zeros], pen=None, symbol='o', symbolSize=10)
+        self.UI.z_plane.plot([pole.coordinates.real for pole in self.poles], [pole.coordinates.imag for pole in self.poles], pen=None, symbol='x', symbolSize=10)
         self.UI.z_plane.setAspectLocked(True)
         self.plot_frequency_response()
 
-    def add_zeros_poles(self):
+    def add_zeros_poles(self, x, y):
         # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
         if self.UI.zeros_radioButton.isChecked():
-            zero = Zero(0.5 + 0.5j)
+            zero = Zero(x + y * 1j)
             self.zeros.append(zero)  # testing only do not delete
             self.plot_unit_circle()
         elif self.UI.pole_radioButton.isChecked():
-            zero = Zero(0.5 + 0.5j)
-            self.poles.append(-0.5 - 0.5j)  # testing only do not delete
+            pole = Pole(x + y* 1j)
+            self.poles.append(pole)  # testing only do not delete
             self.plot_unit_circle()
 
     def add_conjugates(self):
