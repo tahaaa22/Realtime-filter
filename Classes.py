@@ -11,13 +11,13 @@ class Filter:
         
 
 
-class Zeros:
-    def __init__(self):
-        self.x = None
-        self.y = None
+class Zero:
+    def __init__(self,coordinates,  conj = False):
+        self.coordinates = coordinates
+        self.has_conjugate= conj
     
     
-class Poles:
-    def __init__(self):
-        self.x = None
-        self.y = None
+class Pole:
+    def __init__(self,coordinates,  conj = False):
+        self.coordinates = coordinates
+        self.has_conjugate= conj

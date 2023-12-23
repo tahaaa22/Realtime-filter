@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.signal import freqz
-
+from Classes import *
 
 # TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
 # TODO: taha check for repetition after finishing all the todos
@@ -32,21 +32,25 @@ class AppManager:
     def add_zeros_poles(self):
         # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
         if self.UI.zeros_radioButton.isChecked():
-            self.zeros.append(0.5 + 0.5j)  # testing only do not delete
+            zero = Zero(0.5 + 0.5j)
+            self.zeros.append(zero.coordinates)  # testing only do not delete
             self.plot_unit_circle()
         elif self.UI.pole_radioButton.isChecked():
+            zero = Zero(0.5 + 0.5j)
             self.poles.append(-0.5 - 0.5j)  # testing only do not delete
             self.plot_unit_circle()
 
     def add_conjugates(self):
-        poles_conjugates = []
-        zeros_conjugates = []
         for pole in self.poles:
-            poles_conjugates.append(np.conjugate(pole))
-        self.poles.extend(poles_conjugates)
-        for zeros in self.zeros:
-            zeros_conjugates.append(np.conjugate(zeros))
-        self.zeros.extend(zeros_conjugates) 
+            if not pole.has_conjugate:
+                pole.has_conjugate = True
+                pole_conj = Pole(np.conjugate(pole), True)
+                self.poles.append(pole_conj)
+        for zero in self.zeros:
+            if not zero.has_conjugate:
+                zero.has_conjugate = True
+                zer_conj = Zero(np.conjugate(zero), True)
+                self.zeros.append(zer_conj)
         self.plot_unit_circle()
 
     def clear_placement(self):
