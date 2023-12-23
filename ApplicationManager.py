@@ -23,6 +23,9 @@ class AppManager:
         # Draw vertical and horizontal lines passing through the center
         self.UI.z_plane.plot([0, 0], [-1, 1])
         self.UI.z_plane.plot([-1, 1], [0, 0])
+        # self.UI.z_plane.plot([zero.coordinates.real for zero in self.zeros], [zero.coordinates.imag for zero in self.zeros], pen=None, symbol='o', symbolSize=10)
+        # self.UI.z_plane.plot([pole.coordinates.real for pole in self.poles], [pole.coordinates.imag for pole in self.poles], pen=None, symbol='x', symbolSize=10)
+
         self.UI.z_plane.setAspectLocked(True)
 
         self.UI.z_plane_2.plot(x, y)
