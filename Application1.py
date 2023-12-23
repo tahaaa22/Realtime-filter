@@ -1,9 +1,14 @@
 from pyqtgraph import PlotWidget
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+from ApplicationManager import AppManager
 
 
 class Ui_Application(object):
+   
+        
+       
+        
     def setupUi(self, Application):
         Application.setObjectName("Application")
         Application.resize(994, 624)
@@ -247,18 +252,18 @@ class Ui_Application(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_3 = QtWidgets.QLabel(self.Zplane_box)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
-        self.label_3.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_3.setFont(font)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_2.addWidget(self.label_3)
-        spacerItem2 = QtWidgets.QSpacerItem(188, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        # self.label_3 = QtWidgets.QLabel(self.Zplane_box)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        # self.label_3.setSizePolicy(sizePolicy)
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
+        # self.label_3.setFont(font)
+        # self.label_3.setObjectName("label_3")
+        #self.horizontalLayout_2.addWidget(self.label_3)
+        spacerItem2 = QtWidgets.QSpacerItem(188, 6, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.z_plane = PlotWidget(self.Zplane_box)
@@ -272,12 +277,12 @@ class Ui_Application(object):
         self.verticalLayout_4.addWidget(self.z_plane)
         self.verticalLayout_3.addWidget(self.Zplane_box)
         self.preferenceBox = QtWidgets.QGroupBox(self.design_box)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.preferenceBox.sizePolicy().hasHeightForWidth())
         self.preferenceBox.setSizePolicy(sizePolicy)
-        self.preferenceBox.setMaximumSize(QtCore.QSize(16777213, 16777215))
+        self.preferenceBox.setMaximumSize(QtCore.QSize(16777213, 200))
         self.preferenceBox.setStyleSheet("QGroupBox {\n"
 "background-color: #1e1e2f;\n"
 "border: 1.2px solid #ffffff;\n"
@@ -332,9 +337,9 @@ class Ui_Application(object):
         self.zeros_button = QtWidgets.QRadioButton(self.preferenceBox)
         self.zeros_button.setObjectName("zeros_button")
         self.horizontalLayout_5.addWidget(self.zeros_button)
-        self.phase_button = QtWidgets.QRadioButton(self.preferenceBox)
-        self.phase_button.setObjectName("phase_button")
-        self.horizontalLayout_5.addWidget(self.phase_button)
+        self.pole_button = QtWidgets.QRadioButton(self.preferenceBox)
+        self.pole_button.setObjectName("pole_button")
+        self.horizontalLayout_5.addWidget(self.pole_button)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -383,7 +388,7 @@ class Ui_Application(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.magBox = QtWidgets.QGroupBox(self.design_box)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.magBox.sizePolicy().hasHeightForWidth())
@@ -419,7 +424,7 @@ class Ui_Application(object):
         self.verticalLayout.addWidget(self.Magnitude_graph)
         self.verticalLayout_5.addWidget(self.magBox)
         self.phasebox = QtWidgets.QGroupBox(self.design_box)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.phasebox.sizePolicy().hasHeightForWidth())
@@ -1015,7 +1020,7 @@ class Ui_Application(object):
         _translate = QtCore.QCoreApplication.translate
         Application.setWindowTitle(_translate("Application", "MainWindow"))
         self.label.setText(_translate("Application", "Realtime Digital Filter"))
-        self.label_3.setText(_translate("Application", "Z - Pole"))
+        #self.label_3.setText(_translate("Application", "Z - Pole"))
         self.label_5.setText(_translate("Application", "Zeros-poles placement:"))
         self.label_6.setText(_translate("Application", "Clear:"))
         self.Clear_combobox.setCurrentText(_translate("Application", "all zeros"))
@@ -1025,7 +1030,7 @@ class Ui_Application(object):
         self.Clear_combobox.setItemText(3, _translate("Application", "current"))
         self.confirm_button.setText(_translate("Application", "Confirm"))
         self.zeros_button.setText(_translate("Application", "Zeros"))
-        self.phase_button.setText(_translate("Application", "Poles"))
+        self.pole_button.setText(_translate("Application", "Poles"))
         self.label_7.setText(_translate("Application", "magnitude:"))
         self.label_8.setText(_translate("Application", "Phase:"))
         self.label_9.setText(_translate("Application", "Conjugates:"))
@@ -1063,5 +1068,15 @@ if __name__ == "__main__":
     Application = QtWidgets.QMainWindow()
     ui = Ui_Application()
     ui.setupUi(Application)
+    Maestro = AppManager(ui)
+    Maestro.plot_unit_circle()
+    #TODO: there is a repetition that is not needed in the future fix the bug and remove it (taha)
+    #NOTE: DONOT DELETE ANY THING (team)
+    ui.zeros_button.toggled.connect(Maestro.reset_sliders)
+    ui.pole_button.toggled.connect(Maestro.reset_sliders)
+    ui.mag_slider.valueChanged.connect(Maestro.add_zeros_poles)
+    ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
+    ui.confirm_button.clicked.connect(Maestro.clear_placement)
+    ui.confirm_button.clicked.connect(Maestro.reset_sliders)
     Application.show()
     sys.exit(app.exec_())
