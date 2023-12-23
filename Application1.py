@@ -300,6 +300,7 @@ class Ui_Application(object):
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.zeros_radioButton = QtWidgets.QRadioButton(self.preferenceBox)
+        self.zeros_radioButton.setChecked(True)
         self.zeros_radioButton.setStyleSheet("background-color: #784B84;\n"
 "      color: white;\n"
 "      border: none;\n"
@@ -1044,7 +1045,7 @@ class Ui_Application(object):
         Application.setStatusBar(self.statusbar)
 
         self.retranslateUi(Application)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.Clear_combobox.setCurrentIndex(0)
         self.speed_slider.valueChanged['int'].connect(self.speed_LCD.display) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Application)
@@ -1103,7 +1104,7 @@ if __name__ == "__main__":
     #TODO: there is a repetition that is not needed in the future fix the bug and remove it (taha)
     #NOTE: DONOT DELETE ANY THING (team)
     ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
-    ui.confirm_button.clicked.connect(Maestro.clear_placement)
+    #ui.confirm_button.clicked.connect(Maestro.clear_placement)
     ui.confirm_button.clicked.connect(Maestro.add_zeros_poles)
     Application.show()
     sys.exit(app.exec_())
