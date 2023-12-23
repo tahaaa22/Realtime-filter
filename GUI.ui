@@ -311,7 +311,7 @@ margin-left: 10px;
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="design_tab">
        <property name="palette">
@@ -562,6 +562,11 @@ QGroupBox::title  {
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
 background-color: #1e1e2f;
@@ -632,9 +637,14 @@ QGroupBox::title  {
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>16777213</width>
+                 <width>800</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
@@ -650,23 +660,43 @@ QGroupBox::title  {
     color: rgb(255, 255, 255);
 }</string>
                </property>
+               <property name="title">
+                <string>Zeros-poles placement:</string>
+               </property>
                <layout class="QGridLayout" name="gridLayout_9">
                 <item row="0" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Zeros-poles placement:</string>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <spacer name="horizontalSpacer_12">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Maximum</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>6</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
                 </item>
                 <item row="1" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <item>
                    <widget class="QRadioButton" name="zeros_radioButton">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: #784B84;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+     border: 1.2px solid white;
+border-style: outset;
+border-radius: 8px;</string>
+                    </property>
                     <property name="text">
                      <string>Zeros</string>
                     </property>
@@ -674,6 +704,15 @@ QGroupBox::title  {
                   </item>
                   <item>
                    <widget class="QRadioButton" name="pole_radioButton">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: #784B84;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+     border: 1.2px solid white;
+border-style: outset;
+border-radius: 8px;</string>
+                    </property>
                     <property name="text">
                      <string>Poles</string>
                     </property>
@@ -682,101 +721,129 @@ QGroupBox::title  {
                  </layout>
                 </item>
                 <item row="2" column="0">
-                 <layout class="QHBoxLayout" name="horizontalLayout_9">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
-                    <item>
-                     <widget class="QLabel" name="label_6">
-                      <property name="text">
-                       <string>Clear:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QComboBox" name="Clear_combobox">
-                      <property name="editable">
-                       <bool>true</bool>
-                      </property>
-                      <property name="currentText">
-                       <string>all zeros</string>
-                      </property>
-                      <property name="currentIndex">
-                       <number>0</number>
-                      </property>
-                      <item>
+                 <widget class="QGroupBox" name="">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QGroupBox {
+background-color: #1e1e2f;
+}
+background-color: #784B84;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+     border: 1.2px solid white;
+border-style: outset;
+border-radius: 8px;</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_4">
+                     <item>
+                      <widget class="QLabel" name="label_6">
                        <property name="text">
+                        <string>Clear:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QComboBox" name="Clear_combobox">
+                       <property name="editable">
+                        <bool>true</bool>
+                       </property>
+                       <property name="currentText">
                         <string>all zeros</string>
                        </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>all poles</string>
+                       <property name="currentIndex">
+                        <number>0</number>
                        </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>clear all</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>current</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="confirm_button">
-                    <property name="maximumSize">
-                     <size>
-                      <width>86</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">background-color: #00A86B;
+                       <item>
+                        <property name="text">
+                         <string>all zeros</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>all poles</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>all</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>current</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="confirm_button">
+                     <property name="maximumSize">
+                      <size>
+                       <width>86</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: #00A86B;
       color: white;
       border: none;
       padding: 5px 10px;
      border: 1.2px ;
 border-style: outset;
 border-radius: 8px;</string>
-                    </property>
-                    <property name="text">
-                     <string>Confirm</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                     </property>
+                     <property name="text">
+                      <string>Confirm</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </item>
                 <item row="3" column="0">
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
-                  <item>
-                   <widget class="QLabel" name="label_9">
-                    <property name="text">
-                     <string>Conjugates:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="add_conjugates">
-                    <property name="styleSheet">
-                     <string notr="true">background-color: #00A86B;
+                 <widget class="QGroupBox" name="">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                   <item>
+                    <widget class="QLabel" name="label_9">
+                     <property name="text">
+                      <string>Conjugates:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="add_conjugates">
+                     <property name="styleSheet">
+                      <string notr="true">background-color: #00A86B;
     color: white;
     border: none;
     padding: 5px 10px;
      border: 1.2px ;
 border-style: outset;
 border-radius: 8px;</string>
-                    </property>
-                    <property name="text">
-                     <string>Add</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                     </property>
+                     <property name="text">
+                      <string>Add</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -788,10 +855,15 @@ border-radius: 8px;</string>
              <item>
               <widget class="QGroupBox" name="magBox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
@@ -807,21 +879,12 @@ QGroupBox::title  {
     color: rgb(255, 255, 255);
 }</string>
                </property>
+               <property name="title">
+                <string>Magnitude Response</string>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Magnitude Response</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item>
                    <spacer name="horizontalSpacer_2">
                     <property name="orientation">
@@ -833,7 +896,7 @@ QGroupBox::title  {
                     <property name="sizeHint" stdset="0">
                      <size>
                       <width>88</width>
-                      <height>20</height>
+                      <height>6</height>
                      </size>
                     </property>
                    </spacer>
@@ -841,7 +904,14 @@ QGroupBox::title  {
                  </layout>
                 </item>
                 <item>
-                 <widget class="PlotWidget" name="Magnitude_graph"/>
+                 <widget class="PlotWidget" name="Magnitude_graph">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -849,10 +919,15 @@ QGroupBox::title  {
              <item>
               <widget class="QGroupBox" name="phasebox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
@@ -868,21 +943,12 @@ QGroupBox::title  {
     color: rgb(255, 255, 255);
 }</string>
                </property>
+               <property name="title">
+                <string>Phase Response</string>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QLabel" name="label_4">
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Phase Response</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item>
                    <spacer name="horizontalSpacer_3">
                     <property name="orientation">
@@ -894,7 +960,7 @@ QGroupBox::title  {
                     <property name="sizeHint" stdset="0">
                      <size>
                       <width>118</width>
-                      <height>20</height>
+                      <height>6</height>
                      </size>
                     </property>
                    </spacer>
@@ -902,7 +968,14 @@ QGroupBox::title  {
                  </layout>
                 </item>
                 <item>
-                 <widget class="PlotWidget" name="Phase_graph"/>
+                 <widget class="PlotWidget" name="Phase_graph">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -1911,6 +1984,12 @@ QGroupBox::title  {
              <layout class="QGridLayout" name="gridLayout_8">
               <item row="0" column="0">
                <layout class="QHBoxLayout" name="horizontalLayout_22">
+                <property name="spacing">
+                 <number>8</number>
+                </property>
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_8">
                   <item>
@@ -1938,13 +2017,13 @@ QGroupBox::title  {
                      <number>0</number>
                     </property>
                     <property name="rightMargin">
-                     <number>60</number>
+                     <number>32</number>
                     </property>
                     <item>
                      <widget class="QRadioButton" name="load_radioButton">
                       <property name="maximumSize">
                        <size>
-                        <width>156</width>
+                        <width>179</width>
                         <height>16777215</height>
                        </size>
                       </property>
@@ -1953,8 +2032,18 @@ QGroupBox::title  {
                         <pointsize>10</pointsize>
                        </font>
                       </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: #784B84;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+     border: 1.2px solid white;
+margin-right: 10px;
+border-style: outset;
+border-radius: 8px;</string>
+                      </property>
                       <property name="text">
-                       <string>Load Signal</string>
+                       <string>Load Signal  </string>
                       </property>
                      </widget>
                     </item>
@@ -1962,7 +2051,7 @@ QGroupBox::title  {
                      <widget class="QRadioButton" name="touch_pad_radioButton">
                       <property name="maximumSize">
                        <size>
-                        <width>156</width>
+                        <width>181</width>
                         <height>16777215</height>
                        </size>
                       </property>
@@ -1970,6 +2059,15 @@ QGroupBox::title  {
                        <font>
                         <pointsize>10</pointsize>
                        </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: #784B84;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+     border: 1.2px solid white;
+border-style: outset;
+border-radius: 8px;</string>
                       </property>
                       <property name="text">
                        <string>Touch Pad</string>
