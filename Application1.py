@@ -1093,8 +1093,6 @@ class Ui_Application(object):
         self.load_button.setText(_translate("Application", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results_tab), _translate("Application", "Results"))
 
-
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Application = QtWidgets.QMainWindow()
@@ -1104,10 +1102,8 @@ if __name__ == "__main__":
     Maestro.plot_unit_circle()
     #TODO: there is a repetition that is not needed in the future fix the bug and remove it (taha)
     #NOTE: DONOT DELETE ANY THING (team)
-    ui.zeros_radioButton.toggled.connect(Maestro.reset_sliders)
-    ui.pole_radioButton.toggled.connect(Maestro.reset_sliders)
     ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
     ui.confirm_button.clicked.connect(Maestro.clear_placement)
-    ui.confirm_button.clicked.connect(Maestro.reset_sliders)
+    ui.confirm_button.clicked.connect(Maestro.add_zeros_poles)
     Application.show()
     sys.exit(app.exec_())

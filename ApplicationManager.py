@@ -24,6 +24,7 @@ class AppManager:
         # Plot the unit circle
         self.UI.z_plane.plot(x, y)
         # Plot poles and zeros
+        
         self.UI.z_plane.plot(np.real(self.poles), np.imag(self.poles), pen=None,symbol='x', symbolSize=10)
         self.UI.z_plane.plot(np.real(self.zeros), np.imag(self.zeros), pen=None,symbol='o', symbolSize=10)
         self.UI.z_plane.setAspectLocked(True)
@@ -33,7 +34,7 @@ class AppManager:
         # TODO: taha change the mag and phase slider values to float, how? need to search then return this line complex(mag, phase)
         if self.UI.zeros_radioButton.isChecked():
             zero = Zero(0.5 + 0.5j)
-            self.zeros.append(zero.coordinates)  # testing only do not delete
+            self.zeros.append(zero)  # testing only do not delete
             self.plot_unit_circle()
         elif self.UI.pole_radioButton.isChecked():
             zero = Zero(0.5 + 0.5j)
