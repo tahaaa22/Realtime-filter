@@ -1,87 +1,49 @@
 import pyqtgraph as pg
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
-import numpy as np
+from PyQt5.QtWidgets import QApplication
 
-class DraggablePlotWidget(pg.PlotWidget):
-    def __init__(self):
-        super(DraggablePlotWidget, self).__init__()
+class MyPlotWidget(pg.PlotWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mouse_dragging = False
+        self.last_mouse_pos = None
+        self.selected_point = None
 
-        # Store the points to be plotted
-        self.points = []
+        # Plot some example data
+        self.x = [1, 2, 3, 4, 5]
+        self.y = [2, 4, 1, 7, 2]
+        self.scatter = self.plot(self.x, self.y, symbol='o', symbolPen='b')
 
-        # Enable mouse tracking to capture mouse events
-        self.setMouseTracking(True)
+    def mousePressEvent(self, event):
+        if event.button() == pg.QtCore.Qt.LeftButton:
+            mouse_point = self.plotItem.vb.mapSceneToView(event.pos())
 
-        # Connect mouse events to custom functions
-        self.scene().sceneSigMouseMoved.connect(self.mouse_moved)
-        self.scene().sceneSigMouseClicked.connect(self.mouse_clicked)
+            # Check if the mouse is close to any plotted points
+            for i in range(len(self.x)):
+                if abs(mouse_point.x() - self.x[i]) < 0.2 and abs(mouse_point.y() - self.y[i]) < 0.2:
+                    self.mouse_dragging = True
+                    self.selected_point = i
+                    self.last_mouse_pos = event.pos()
+                    break
 
-        # Store the index of the clicked point
-        self.clicked_point_index = None
+    def mouseMoveEvent(self, event):
+        if self.mouse_dragging and self.selected_point is not None:
+            delta = event.pos() - self.last_mouse_pos
 
-    def plot_points(self, points):
-        self.clear()
-        self.plot(*zip(*points), pen=None, symbol='o', symbolSize=10)
+            # Update the selected point's coordinates
+            self.x[self.selected_point], self.y[self.selected_point] = self.plotItem.vb.mapSceneToView(event.pos()).x(), self.plotItem.vb.mapSceneToView(event.pos()).y()
 
-    def mouse_moved(self, ev):
-        # Update the cursor position in the status bar or perform other actions
-        pass
+            # Update the scatter plot with the new coordinates
+            self.scatter.setData(x=self.x, y=self.y)
 
-    def mouse_clicked(self, ev):
-        # Check if a point is clicked
-        pos = self.vb.mapSceneToView(ev.pos())
-        clicked_point_index = self.get_clicked_point_index(pos)
+            self.last_mouse_pos = event.pos()
 
-        if clicked_point_index is not None:
-            # Store the clicked point index for dragging
-            self.clicked_point_index = clicked_point_index
-            self.setCursor(Qt.ClosedHandCursor)
+    def mouseReleaseEvent(self, event):
+        if event.button() == pg.QtCore.Qt.LeftButton:
+            self.mouse_dragging = False
+            self.selected_point = None
 
-    def mouseReleaseEvent(self, ev):
-        # Reset cursor and clicked point index when the mouse is released
-        self.setCursor(Qt.ArrowCursor)
-        self.clicked_point_index = None
-
-    def mouseMoveEvent(self, ev):
-        # Drag the point if it was clicked
-        if self.clicked_point_index is not None:
-            pos = self.vb.mapSceneToView(ev.pos())
-            self.update_point_position(self.clicked_point_index, pos)
-
-    def get_clicked_point_index(self, pos):
-        # Check if the mouse click is close to any plotted point
-        for i, point in enumerate(self.points):
-            if np.linalg.norm(np.array(point) - np.array(pos)) < 0.1:
-                return i
-        return None
-
-    def update_point_position(self, index, new_pos):
-        # Update the position of a point in the list and redraw the plot
-        self.points[index] = tuple(new_pos)
-        self.plot_points(self.points)
-
-class MyWindow(QMainWindow):
-    def __init__(self):
-        super(MyWindow, self).__init__()
-
-        # Create a central widget to hold the draggable plot widget
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
-
-        # Create a layout for the central widget
-        layout = QVBoxLayout(central_widget)
-
-        # Create a draggable plot widget
-        self.plot_widget = DraggablePlotWidget()
-        layout.addWidget(self.plot_widget)
-
-        # Add some example points
-        self.plot_widget.points = [(1, 2), (3, 4), (-2, 1)]
-        self.plot_widget.plot_points(self.plot_widget.points)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication([])
-    window = MyWindow()
-    window.show()
+    win = MyPlotWidget()
+    win.show()
     app.exec_()
