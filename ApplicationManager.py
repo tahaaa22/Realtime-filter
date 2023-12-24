@@ -6,9 +6,10 @@ from Classes import *
 class AppManager:
     def __init__(self, ui):
         self.UI = ui
-        self.Filters = [] # Filter at index 0 will always be the main filter
-        self.designed_filter = Filter()
-        self.Filters.append(self.designed_filter)
+        self.tabs_z_planes = [ui.z_plane, ui.z_plane_2]
+        self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
+        self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
+
         
     def set_newCoordinates(self,new, x_old, y_old, new_placement_tuple):
         for zero in self.designed_filter.zeros:
@@ -23,28 +24,27 @@ class AppManager:
         x,y = new_placement_tuple
         self.add_zeros_poles(x, y)
         
-    def plot_unit_circle(self):
-        self.UI.z_plane.clear()
-        # Generate points on the unit circle
+    def plot_unit_circle(self, tab_num : int, filter_number : int = 0):
         theta = np.linspace(0, 2 * np.pi, 100)
         x = np.cos(theta)
         y = np.sin(theta)
-
-        self.UI.z_plane.plot(x, y)
+        self.tabs_z_planes[tab_num].clear()
+        self.tabs_z_planes[tab_num].plot(x, y)
         # Draw vertical and horizontal lines passing through the center
-        self.UI.z_plane.plot([0, 0], [-1, 1])
-        self.UI.z_plane.plot([-1, 1], [0, 0])
-        self.UI.z_plane.plot([zero.coordinates.real for zero in self.designed_filter.zeros], [zero.coordinates.imag for zero in self.designed_filter.zeros], pen=None, symbol='o', symbolSize=10, pxMode=True)
-        self.UI.z_plane.plot([pole.coordinates.real for pole in self.designed_filter.poles], [pole.coordinates.imag for pole in self.designed_filter.poles], pen=None, symbol='x', symbolSize=10)
-
-        self.UI.z_plane.setAspectLocked(True)
-
-        self.UI.z_plane_2.plot(x, y)
-        self.UI.z_plane_2.plot([0, 0], [-1, 1])
-        self.UI.z_plane_2.plot([-1, 1], [0, 0])
-        self.UI.z_plane_2.setAspectLocked(True)
+        self.tabs_z_planes[tab_num].plot([0, 0], [-1, 1])
+        self.tabs_z_planes[tab_num].plot([-1, 1], [0, 0])
+        self.tabs_z_planes[tab_num].setAspectLocked(True)
+        self.plot_zeros_poles(tab_num, filter_number)
         #self.designed_filter.calculate_frequency_response()
         #self.plot_response('D', self.designed_filter)
+
+    def plot_zeros_poles(self, tab_num : int, filter_number):
+        self.tabs_z_planes[tab_num].plot([zero.coordinates.real for zero in self.Filters[filter_number].zeros],
+                             [zero.coordinates.imag for zero in self.Filters[filter_number].zeros], pen=None, symbol='o',
+                             symbolSize=10, pxMode=True)
+        self.tabs_z_planes[tab_num].plot([pole.coordinates.real for pole in self.Filters[filter_number].poles],
+                             [pole.coordinates.imag for pole in self.Filters[filter_number].poles], pen=None, symbol='x',
+                             symbolSize=10)
 
     def add_zeros_poles(self, x, y):
         if self.UI.zeros_radioButton.isChecked():
@@ -77,8 +77,8 @@ class AppManager:
 
         # dictionary mapping options to lists
         clear_options = {
-            "all zeros": (self.designed_filter.zeros),
-            "all poles": (self.designed_filter.poles),
+            "all zeros": self.designed_filter.zeros,
+            "all poles": self.designed_filter.poles,
             "all": (self.designed_filter.zeros, self.designed_filter.poles)}
     
         # Clear the selected lists based on the current option
@@ -118,5 +118,10 @@ class AppManager:
             self.UI.corrected_phase.addLegend()
             self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
 
+    def display_allpass_filter(self, index : int):
+        self.plot_unit_circle(1, index + 1)
 
+    def display_tab(self, index : int):
+        if index == 1:
+            self.plot_unit_circle(1, self.UI.filter_combobox.currentIndex() + 1)
 

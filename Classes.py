@@ -6,9 +6,14 @@ class Signal:
 
 
 class Filter:
-    def __init__(self):
+    def __init__(self, pole : complex = None):
         self.zeros = set()
         self.poles = set()
+        if pole:
+            chosen_pole = Pole(pole)
+            calculated_zero = Zero(1 / pole.conjugate())
+            self.poles.add(chosen_pole)
+            self.zeros.add(calculated_zero)
         self.mag_response = None
         self.phase_response = None
         self.frequencies = None
