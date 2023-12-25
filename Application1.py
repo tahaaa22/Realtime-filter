@@ -20,7 +20,6 @@ class PlotWidget1(PlotWidget):
         self.mouse_dragging = False
         self.last_mouse_pos = None
         self.selected_point = None
-        self.enable_interaction = True
     
     def mousePressEvent(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
@@ -46,16 +45,8 @@ class PlotWidget1(PlotWidget):
                         clicked_point = ScatterPlotItem()
                         clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
                         self.addItem(clicked_point)
-                else:
-                        current_text = self.clear_box.currentText()
-                        if current_text == "current":
-                                self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
-                                # Remove the point from clicked_points
-                                if (self.cursor_x_coordinates, self.cursor_y_coordinates) in self.clicked_points:
-                                        self.clicked_points.remove((self.cursor_x_coordinates, self.cursor_y_coordinates))
-                        else: #check if the user is dragging the point
-                                self.enable_interaction = True
-        else:
+                                    
+        else: # check dragging 
                 self.mouse_dragging = True
                 for i in range(len(self.clicked_points)):
                         x_i, y_i = self.clicked_points[i]
@@ -65,8 +56,13 @@ class PlotWidget1(PlotWidget):
                                 self.selected_point = i
                                 self.last_mouse_pos = mouse_point
                                 break
+        current_text = self.clear_box.currentText()
+        if current_text == "current":
+                self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
+                # Remove the point from clicked_points
+                if (self.cursor_x_coordinates, self.cursor_y_coordinates) in self.clicked_points:
+                        self.clicked_points.remove((self.cursor_x_coordinates, self.cursor_y_coordinates))
                 
-
     def mouseMoveEvent(self, event):
         if self.mouse_dragging and self.selected_point is not None:
             # Update the selected point's coordinates
@@ -74,7 +70,6 @@ class PlotWidget1(PlotWidget):
             y_old = round(self.last_mouse_pos.y(),1)
             current_position = self.plotItem.vb.mapSceneToView(event.pos())
             self.clicked_points[self.selected_point] = round(current_position.x(),1), round(current_position.y(),1)
-            #x_new, y_new = self.clicked_points
             self.Maestro.set_newCoordinates(self.clicked_points, x_old, y_old, self.clicked_points[self.selected_point])
             self.last_mouse_pos = current_position
 
@@ -83,42 +78,7 @@ class PlotWidget1(PlotWidget):
             self.mouse_dragging = False
             self.selected_point = None
             
-#     def on_click(self, event, plot_item):
-#         pos = event.scenePos()
-#         data_pos = plot_item.vb.mapSceneToView(pos)
-#         self.cursor_x_coordinates, self.cursor_y_coordinates = round(data_pos.x(), 1), round(data_pos.y(), 1)
-
-#         if (self.cursor_x_coordinates, self.cursor_y_coordinates) not in self.clicked_points:
-#             # Check if the new point is within the area
-#             is_within_area = False
-#             for i in range(len(self.x)):
-#                 if abs(self.cursor_x_coordinates - self.clicked_points[0,i]) < 0.2 and abs(self.cursor_y_coordinates - self.clicked_points[1,i]) < 0.2:
-#                         self.mouse_dragging = True
-#                         is_within_area = True
-#                         self.selected_point = i
-#                         self.last_mouse_pos = event.pos()
-#                         break
-            
-#             if not is_within_area:
-#                 self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
-#                 self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
-#                 # Create and add the new clicked point
-#                 clicked_point = ScatterPlotItem()
-#                 clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
-#                 self.addItem(clicked_point)
-#         else:
-#                 current_text = self.clear_box.currentText()
-#                 if current_text == "current":
-#                         self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
-#                         # Remove the point from clicked_points
-#                         if (self.cursor_x_coordinates, self.cursor_y_coordinates) in self.clicked_points:
-#                                 self.clicked_points.remove((self.cursor_x_coordinates, self.cursor_y_coordinates))
-#                 else: #check if the user is dragging the point
-#                         self.enable_interaction = True
-                        
-
-                
-            
+                      
 class Ui_Application(object):
     def __init__(self):
         super().__init__()
@@ -1214,7 +1174,6 @@ class Ui_Application(object):
         self.load_button.setText(_translate("Application", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results_tab), _translate("Application", "Results"))
         
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Application = QtWidgets.QMainWindow()
@@ -1224,7 +1183,6 @@ if __name__ == "__main__":
     ui.z_plane.Maestro = Maestro
     ui.z_plane.clear_box = ui.Clear_combobox
     Maestro.plot_unit_circle(0)
-    #NOTE: DONOT DELETE ANY THING (team)
     ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
     ui.confirm_button.clicked.connect(Maestro.clear_placement)
     Application.show()

@@ -1,6 +1,5 @@
 from Classes import *
 
-# TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
 # TODO: taha check for repetition after finishing all the todos
 
 class AppManager:
@@ -10,7 +9,6 @@ class AppManager:
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
 
-        
     def set_newCoordinates(self,new, x_old, y_old, new_placement_tuple):
         for zero in self.designed_filter.zeros:
                 if zero.coordinates.real == x_old and zero.coordinates.imag == y_old:
@@ -18,7 +16,7 @@ class AppManager:
                     break  # Break the loop since you found and removed the point
             # Iterate through the list of poles
         for pole in self.designed_filter.poles:
-            if pole.coordinates.real == x_old and pole.coordinates.imag == x_old:
+            if pole.coordinates.real == x_old and pole.coordinates.imag == y_old:
                 self.designed_filter.poles.remove(pole)
                 break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
@@ -53,12 +51,12 @@ class AppManager:
         else:
             temp_pole = Pole(x + y * 1j)
             self.designed_filter.add_zero_pole('p', temp_pole)
-            
-        self.plot_unit_circle()
+
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def add_conjugates(self):
         self.designed_filter.add_conjugates()
-        self.plot_unit_circle()
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def clear_placement(self, x = None, y = None, dragable = False):
         # Get the current text of the combo box
@@ -89,8 +87,7 @@ class AppManager:
         else:
             clear_list = clear_options.get(current_text, [])
             clear_list.clear()
-        # TODO: taha add current delete after finishing the highlighting functionality
-        self.plot_unit_circle()
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def plot_response(self, tab : str, filter_obj : Filter):
         if filter_obj.frequencies is None:
