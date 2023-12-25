@@ -17,7 +17,7 @@ class AppManager:
                     break  # Break the loop since you found and removed the point
             # Iterate through the list of poles
         for pole in self.designed_filter.poles:
-            if pole.coordinates.real == x_old and pole.coordinates.imag == x_old:
+            if pole.coordinates.real == x_old and pole.coordinates.imag == y_old:
                 self.designed_filter.poles.remove(pole)
                 break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
