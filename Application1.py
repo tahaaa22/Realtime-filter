@@ -63,7 +63,6 @@ class PlotWidget1(PlotWidget):
                 if (self.cursor_x_coordinates, self.cursor_y_coordinates) in self.clicked_points:
                         self.clicked_points.remove((self.cursor_x_coordinates, self.cursor_y_coordinates))
                 
-
     def mouseMoveEvent(self, event):
         if self.mouse_dragging and self.selected_point is not None:
             # Update the selected point's coordinates
@@ -79,8 +78,7 @@ class PlotWidget1(PlotWidget):
             self.mouse_dragging = False
             self.selected_point = None
             
-                
-            
+                      
 class Ui_Application(object):
     def __init__(self):
         super().__init__()
@@ -1176,7 +1174,6 @@ class Ui_Application(object):
         self.load_button.setText(_translate("Application", "Load"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Results_tab), _translate("Application", "Results"))
         
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Application = QtWidgets.QMainWindow()

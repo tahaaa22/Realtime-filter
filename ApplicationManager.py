@@ -9,7 +9,6 @@ class AppManager:
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
 
-        
     def set_newCoordinates(self,new, x_old, y_old, new_placement_tuple):
         for zero in self.designed_filter.zeros:
                 if zero.coordinates.real == x_old and zero.coordinates.imag == y_old:

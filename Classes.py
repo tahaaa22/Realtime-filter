@@ -37,7 +37,6 @@ class Filter:
                 zer_conj = Zero(np.conjugate(zero), True)
                 self.zeros.add(zer_conj)
 
-
     def calculate_frequency_response(self):
         if len(self.zeros) == 0 and len(self.poles) == 0:
             return
@@ -45,13 +44,10 @@ class Filter:
         self.mag_response = np.abs(self.complex_frequencies)
         self.phase_response = np.angle(self.complex_frequencies)
 
-
-
 class Zero:
     def __init__(self, coordinates : complex, conj : bool = False):
         self.coordinates = coordinates
         self.has_conjugate= conj
-    
     
 class Pole:
     def __init__(self, coordinates : complex, conj : bool = False):
