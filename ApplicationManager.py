@@ -1,6 +1,5 @@
 from Classes import *
 
-# TODO: taha make the zeros and poles dragable (note: check your last research you reached a solid point)
 # TODO: taha check for repetition after finishing all the todos
 
 class AppManager:
@@ -53,12 +52,12 @@ class AppManager:
         else:
             temp_pole = Pole(x + y * 1j)
             self.designed_filter.add_zero_pole('p', temp_pole)
-            
-        self.plot_unit_circle()
+
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def add_conjugates(self):
         self.designed_filter.add_conjugates()
-        self.plot_unit_circle()
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def clear_placement(self, x = None, y = None, dragable = False):
         # Get the current text of the combo box
@@ -89,8 +88,7 @@ class AppManager:
         else:
             clear_list = clear_options.get(current_text, [])
             clear_list.clear()
-        # TODO: taha add current delete after finishing the highlighting functionality
-        self.plot_unit_circle()
+        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def plot_response(self, tab : str, filter_obj : Filter):
         if filter_obj.frequencies is None:
