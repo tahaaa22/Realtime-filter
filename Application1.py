@@ -878,7 +878,6 @@ class Ui_Application(object):
         self.filter_combobox.addItem("")
         self.filter_combobox.addItem("")
         self.filter_combobox.addItem("")
-        self.filter_combobox.addItem("")
         self.horizontalLayout_18.addWidget(self.filter_combobox)
         self.add_filter_button = QtWidgets.QPushButton(self.filterBox)
         font = QtGui.QFont()
@@ -1168,6 +1167,8 @@ class Ui_Application(object):
         self.tabWidget.setCurrentIndex(0)
         self.Clear_combobox.setCurrentIndex(0)
         self.speed_slider.valueChanged['int'].connect(self.speed_LCD.display) # type: ignore
+        self.filter_combobox.currentIndexChanged.connect(lambda index: Maestro.display_allpass_filter(index))
+        self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
         QtCore.QMetaObject.connectSlotsByName(Application)
 
     def retranslateUi(self, Application):
@@ -1196,12 +1197,11 @@ class Ui_Application(object):
         self.custom_filter_text.setPlaceholderText(_translate("Application", "enter arbitary \'a\'"))
         self.apply_custom_filter.setText(_translate("Application", "Apply"))
         self.label_15.setText(_translate("Application", "Choose Filter:"))
-        self.filter_combobox.setItemText(0, _translate("Application", "New Item"))
-        self.filter_combobox.setItemText(1, _translate("Application", "New Item"))
-        self.filter_combobox.setItemText(2, _translate("Application", "New Item"))
-        self.filter_combobox.setItemText(3, _translate("Application", "New Item"))
-        self.filter_combobox.setItemText(4, _translate("Application", "New Item"))
-        self.filter_combobox.setItemText(5, _translate("Application", "custom"))
+        self.filter_combobox.setItemText(0, _translate("Application", "0.5 + 0.5j"))
+        self.filter_combobox.setItemText(1, _translate("Application", "-0.5 + 0.5j"))
+        self.filter_combobox.setItemText(2, _translate("Application", "0.5 - 0.5j"))
+        self.filter_combobox.setItemText(3, _translate("Application", "-0.5 - 0.5j"))
+        self.filter_combobox.setItemText(4, _translate("Application", "Custom"))
         self.add_filter_button.setText(_translate("Application", "Add"))
         self.delete_filter_button.setText(_translate("Application", "Delete"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.correction_tab), _translate("Application", "Correction"))
@@ -1223,7 +1223,7 @@ if __name__ == "__main__":
     Maestro = AppManager(ui)
     ui.z_plane.Maestro = Maestro
     ui.z_plane.clear_box = ui.Clear_combobox
-    Maestro.plot_unit_circle()
+    Maestro.plot_unit_circle(0)
     #NOTE: DONOT DELETE ANY THING (team)
     ui.add_conjugates.clicked.connect(Maestro.add_conjugates)
     ui.confirm_button.clicked.connect(Maestro.clear_placement)
