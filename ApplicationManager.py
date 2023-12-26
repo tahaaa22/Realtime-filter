@@ -8,6 +8,7 @@ class AppManager:
         self.tabs_z_planes = [ui.z_plane, ui.z_plane_2]
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
+        self.custom_allpass_filters = 0
 
     def set_newCoordinates(self,new, x_old, y_old, new_placement_tuple):
         for zero in self.designed_filter.zeros:
@@ -124,3 +125,21 @@ class AppManager:
             self.plot_unit_circle(1, self.UI.filter_combobox.currentIndex() + 1)
             self.plot_response('C', self.Filters[self.UI.filter_combobox.currentIndex() + 1])
 
+    def add_filter(self):
+        if self.UI.custom_filter_text.text() == "":
+            pass
+        else:
+            try:
+                # First we obtain the value of the custom pole coordinates and append it in the combobox
+                chosen_a = complex(self.UI.custom_filter_text.text())
+                self.custom_allpass_filters += 1
+                self.UI.filter_combobox.addItem(str(chosen_a))
+                # Secondly we create the filter and append it to Filters list
+                self.Filters.append(Filter(complex(self.UI.custom_filter_text.text())))
+                self.UI.filter_combobox.setCurrentIndex(3 + self.custom_allpass_filters)
+                self.UI.custom_filter_text.setText("")
+            except ValueError:
+                print(f"Invalid input {self.UI.custom_filter_text.text()}")
+
+    def delete_filter(self):
+        pass
