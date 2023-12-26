@@ -1127,6 +1127,7 @@ class Ui_Application(object):
         self.Clear_combobox.setCurrentIndex(0)
         self.speed_slider.valueChanged['int'].connect(self.speed_LCD.display) # type: ignore
         self.filter_combobox.currentIndexChanged.connect(lambda index: Maestro.display_allpass_filter(index))
+        self.load_radioButton.setChecked(True)
         self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
         QtCore.QMetaObject.connectSlotsByName(Application)
 
