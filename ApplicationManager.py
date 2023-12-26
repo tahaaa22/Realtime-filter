@@ -10,14 +10,12 @@ class AppManager:
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
 
-    def set_newCoordinates(self,new, x_old, y_old, new_placement_tuple):
-        for zero in self.designed_filter.zeros:
-                if zero.coordinates.real == x_old and zero.coordinates.imag == y_old:
-                    self.designed_filter.zeros.remove(zero)
-                    break  # Break the loop since you found and removed the point
-            # Iterate through the list of poles
-        for pole in self.designed_filter.poles:
-            if pole.coordinates.real == x_old and pole.coordinates.imag == y_old:
+    def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
+        for zero, pole in self.designed_filter.zeros, self.designed_filter.poles:
+            if zero.coordinates.real == x_old and zero.coordinates.imag == y_old:
+                self.designed_filter.zeros.remove(zero)
+                break  # Break the loop since you found and removed the point
+            elif pole.coordinates.real == x_old and pole.coordinates.imag == y_old:
                 self.designed_filter.poles.remove(pole)
                 break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
@@ -60,10 +58,10 @@ class AppManager:
         self.designed_filter.add_conjugates()
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
-    def clear_placement(self, x = None, y = None, dragable = False):
+    def clear_placement(self, x = None, y = None, draggable = False):
         # Get the current text of the combo box
         current_text = self.UI.Clear_combobox.currentText()
-        if current_text == "current" or dragable:
+        if current_text == "current" or draggable:
             # Iterate through the list of zeros
             for zero in self.designed_filter.zeros:
                 if zero.coordinates.real == x and zero.coordinates.imag == y:
@@ -91,30 +89,34 @@ class AppManager:
             clear_list.clear()
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
+    # noinspection PyBroadException
     def plot_response(self, tab : str, filter_obj : Filter):
         filter_obj.calculate_frequency_response()
-        if tab == 'D':
-            self.UI.Magnitude_graph.clear()
-            self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.Magnitude_graph.setLabel('left', 'Magnitude', units='dB')
-            self.UI.Magnitude_graph.addLegend()
-            self.UI.Phase_graph.clear()
-            self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.Phase_graph.setLabel('left', 'Phase', units='radian')
-            self.UI.Phase_graph.addLegend()
-            self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
-            self.UI.Phase_graph.plot(filter_obj.frequencies, filter_obj.phase_response)
+        try :
+            if tab == 'D':
+                self.UI.Magnitude_graph.clear()
+                self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
+                self.UI.Magnitude_graph.setLabel('left', 'Magnitude', units='dB')
+                self.UI.Magnitude_graph.addLegend()
+                self.UI.Phase_graph.clear()
+                self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
+                self.UI.Phase_graph.setLabel('left', 'Phase', units='radian')
+                self.UI.Phase_graph.addLegend()
+                self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
+                self.UI.Phase_graph.plot(filter_obj.frequencies, filter_obj.phase_response)
 
-        else:
-            self.UI.Phase_Response_Graph.clear()
-            self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='radian')
-            self.UI.Phase_Response_Graph.addLegend()
-            self.UI.corrected_phase.clear()
-            self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
-            self.UI.corrected_phase.addLegend()
-            self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
+            else:
+                self.UI.Phase_Response_Graph.clear()
+                self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
+                self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='radian')
+                self.UI.Phase_Response_Graph.addLegend()
+                self.UI.corrected_phase.clear()
+                self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
+                self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
+                self.UI.corrected_phase.addLegend()
+                self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
+        except Exception:
+            return
 
     def display_allpass_filter(self, index : int):
         self.plot_unit_circle(1, index + 1)
@@ -124,10 +126,15 @@ class AppManager:
         if index == 1:
             self.plot_unit_circle(1, self.UI.filter_combobox.currentIndex() + 1)
             self.plot_response('C', self.Filters[self.UI.filter_combobox.currentIndex() + 1])
+        else:
+            self.plot_unit_circle(0)
+            self.plot_response('D', self.designed_filter)
 
     def add_filter(self):
         if self.UI.custom_filter_text.text() == "":
-            pass
+            # Please be advised that | is the symbol for set intersection in python
+            self.designed_filter.zeros |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
+            self.designed_filter.poles |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
         else:
             try:
                 # First we obtain the value of the custom pole coordinates and append it in the combobox
@@ -142,4 +149,6 @@ class AppManager:
                 print(f"Invalid input {self.UI.custom_filter_text.text()}")
 
     def delete_filter(self):
-        pass
+        # Please be advised that - is the symbol for set difference in python
+        self.designed_filter.zeros -= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
+        self.designed_filter.poles -= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
