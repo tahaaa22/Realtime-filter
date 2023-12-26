@@ -33,8 +33,9 @@ class AppManager:
         self.tabs_z_planes[tab_num].plot([-1, 1], [0, 0])
         self.tabs_z_planes[tab_num].setAspectLocked(True)
         self.plot_zeros_poles(tab_num, filter_number)
-        #self.designed_filter.calculate_frequency_response()
-        #self.plot_response('D', self.designed_filter)
+        if tab_num == 0 and len(self.designed_filter.zeros) > 0:
+            self.designed_filter.calculate_frequency_response()
+            self.plot_response('D', self.designed_filter)
 
     def plot_zeros_poles(self, tab_num : int, filter_number):
         self.tabs_z_planes[tab_num].plot([zero.coordinates.real for zero in self.Filters[filter_number].zeros],
@@ -90,8 +91,7 @@ class AppManager:
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def plot_response(self, tab : str, filter_obj : Filter):
-        if filter_obj.frequencies is None:
-            return
+        filter_obj.calculate_frequency_response()
         if tab == 'D':
             self.UI.Magnitude_graph.clear()
             self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
@@ -99,26 +99,28 @@ class AppManager:
             self.UI.Magnitude_graph.addLegend()
             self.UI.Phase_graph.clear()
             self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.Phase_graph.setLabel('left', 'Phase', units='degrees')
+            self.UI.Phase_graph.setLabel('left', 'Phase', units='radian')
             self.UI.Phase_graph.addLegend()
             self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
-            self.UI.Phase_graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
+            self.UI.Phase_graph.plot(filter_obj.frequencies, filter_obj.phase_response)
 
         else:
             self.UI.Phase_Response_Graph.clear()
             self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='degrees')
+            self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='radian')
             self.UI.Phase_Response_Graph.addLegend()
             self.UI.corrected_phase.clear()
             self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
-            self.UI.corrected_phase.setLabel('left', 'Phase', units='degrees')
+            self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
             self.UI.corrected_phase.addLegend()
-            self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, np.degrees(filter_obj.phase_response))
+            self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
 
     def display_allpass_filter(self, index : int):
         self.plot_unit_circle(1, index + 1)
+        self.plot_response('C', self.Filters[index + 1])
 
     def display_tab(self, index : int):
         if index == 1:
             self.plot_unit_circle(1, self.UI.filter_combobox.currentIndex() + 1)
+            self.plot_response('C', self.Filters[self.UI.filter_combobox.currentIndex() + 1])
 

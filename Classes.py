@@ -17,7 +17,7 @@ class Filter:
         self.mag_response = None
         self.phase_response = None
         self.frequencies = None
-        self.complex_frequencies = None
+        self.frequency_response = None
 
     def add_zero_pole(self, char : str, element):
         if char == 'z':
@@ -40,9 +40,9 @@ class Filter:
     def calculate_frequency_response(self):
         if len(self.zeros) == 0 and len(self.poles) == 0:
             return
-        self.frequencies, self.complex_frequencies = freqz(np.poly(list(self.zeros)), np.poly(list(self.poles)), worN=8000)
-        self.mag_response = np.abs(self.complex_frequencies)
-        self.phase_response = np.angle(self.complex_frequencies)
+        self.frequencies, self.frequency_response = freqz(np.poly([zero.coordinates for zero in self.zeros]), np.poly([pole.coordinates for pole in self.poles]), worN=8000)
+        self.mag_response = np.abs(self.frequency_response)
+        self.phase_response = np.angle(self.frequency_response)
 
 class Zero:
     def __init__(self, coordinates : complex, conj : bool = False):
