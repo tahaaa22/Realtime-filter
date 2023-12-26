@@ -11,13 +11,12 @@ class AppManager:
         self.custom_allpass_filters = 0
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
-        for zero, pole in self.designed_filter.zeros, self.designed_filter.poles:
-            if zero.coordinates.real == x_old and zero.coordinates.imag == y_old:
-                self.designed_filter.zeros.remove(zero)
-                break  # Break the loop since you found and removed the point
-            elif pole.coordinates.real == x_old and pole.coordinates.imag == y_old:
-                self.designed_filter.poles.remove(pole)
-                break  # Break the loop since you found and removed the point
+        for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
+            for point in point_list.copy():  # We create a copy of the list before iterating over it.
+                # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
+                if point.coordinates.real == x_old and point.coordinates.imag == y_old:
+                    point_list.remove(point)
+                    break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
         self.add_zeros_poles(x, y)
         

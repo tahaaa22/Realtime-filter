@@ -70,7 +70,7 @@ class PlotWidget1(PlotWidget):
             y_old = round(self.last_mouse_pos.y(),1)
             current_position = self.plotItem.vb.mapSceneToView(event.pos())
             self.clicked_points[self.selected_point] = round(current_position.x(),1), round(current_position.y(),1)
-            self.Maestro.set_newCoordinates(self.clicked_points, x_old, y_old, self.clicked_points[self.selected_point])
+            self.Maestro.set_newCoordinates(x_old, y_old, self.clicked_points[self.selected_point])
             self.last_mouse_pos = current_position
 
     def mouseReleaseEvent(self, event):
