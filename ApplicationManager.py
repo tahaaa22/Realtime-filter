@@ -166,8 +166,7 @@ class AppManager:
         self.mouse_signal.plot_signal()
 
     def load_signal(self):
-        self.UI.real_signal.clear()
-        self.UI.filtered_signal.clear()
+        self.clear_graphs()
         self.loaded_signal.X_Points_Plotted = 0
         File_Path, _ = QFileDialog.getOpenFileName(None, "Browse Signal", "", "All Files (*)")
         if File_Path:
@@ -177,6 +176,14 @@ class AppManager:
             self.loaded_signal.y_coordinates = list(record_data[:, 0])
             self.loaded_signal.x_coordinates = np.linspace(0, self.loaded_signal.duration, len(self.loaded_signal.y_coordinates),
                                                          endpoint=False)
-
             self.loaded_signal.plot_ECG()
 
+    def touchpad_toggled(self):
+        if self.UI.touch_pad_radioButton.isChecked():
+            self.clear_graphs()
+        else:
+            self.ti
+
+    def clear_graphs(self):
+        self.UI.real_signal.clear()
+        self.UI.filtered_signal.clear()

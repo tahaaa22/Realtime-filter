@@ -30,17 +30,15 @@ class Signal:
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
         self.data = self.graph1.plot(self.x_coordinates[:1],
                                                   self.y_coordinates[:1], pen="g")
-
         self.timer = QTimer()
-        self.timer.setInterval(100)
+        self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
 
     def update_plot_data(self):
-        #self.graph1.getViewBox().setXRange(self.X_Points_Plotted - 4, self.X_Points_Plotted)
-        self.data.setData(self.x_coordinates[:self.X_Points_Plotted], self.y_coordinates[:self.X_Points_Plotted])
-        self.X_Points_Plotted += 1
-
+        self.data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], self.y_coordinates[:self.X_Points_Plotted + 1])
+        self.X_Points_Plotted += 50
+        self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
 
 
 class Filter:
