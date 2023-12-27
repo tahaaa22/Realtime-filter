@@ -1,8 +1,26 @@
 import numpy as np
 from scipy.signal import freqz
+from PyQt5.QtCore import QTimer
 class Signal:
-    def __init__(self):
-        pass
+    def __init__(self, real_signal_graph, filtered_signal_graph):
+        self.y_coordinates = []
+        self.x_coordinates = []
+        self.graph1 = real_signal_graph
+        self.graph2 = filtered_signal_graph
+        self.X_Points_Plotted = 0
+
+    def add_point(self, y):
+        self.y_coordinates.append(y)
+        self.x_coordinates = np.arange(len(self.y_coordinates))
+
+    def plot_signal(self):
+        self.X_Points_Plotted += 1
+        self.graph1.setLimits(xMin = 0, xMax = float('inf'))
+        self.graph1.plot(self.x_coordinates, self.y_coordinates)
+        if self.X_Points_Plotted < 50:
+            self.graph1.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
+        else:
+            self.graph1.getViewBox().setXRange(self.x_coordinates[self.X_Points_Plotted - 50], self.x_coordinates[-1])
 
 
 class Filter:

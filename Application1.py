@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget
 import sys
 from ApplicationManager import AppManager
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QGraphicsRectItem
 from pyqtgraph import ScatterPlotItem
 from math import sqrt
 import pyqtgraph as pg
@@ -30,32 +30,32 @@ class PlotWidget1(PlotWidget):
                 # Check if the new point is within the area
                 is_within_area = False
                 for i in range(len(self.clicked_points)):
-                        x_i, y_i = self.clicked_points[i]
-                        if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                                self.mouse_dragging = True
-                                is_within_area = True
-                                self.selected_point = i
-                                self.last_mouse_pos = mouse_point
-                                break
+                    x_i, y_i = self.clicked_points[i]
+                    if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
+                            self.mouse_dragging = True
+                            is_within_area = True
+                            self.selected_point = i
+                            self.last_mouse_pos = mouse_point
+                            break
                 
                 if not is_within_area:
-                        self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
-                        self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
-                        # Create and add the new clicked point
-                        clicked_point = ScatterPlotItem()
-                        clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
-                        self.addItem(clicked_point)
+                    self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
+                    self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
+                    # Create and add the new clicked point
+                    clicked_point = ScatterPlotItem()
+                    clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                    self.addItem(clicked_point)
                                     
         else: # check dragging 
-                self.mouse_dragging = True
-                for i in range(len(self.clicked_points)):
-                        x_i, y_i = self.clicked_points[i]
-                        if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                                self.mouse_dragging = True
-                                is_within_area = True
-                                self.selected_point = i
-                                self.last_mouse_pos = mouse_point
-                                break
+            self.mouse_dragging = True
+            for i in range(len(self.clicked_points)):
+                    x_i, y_i = self.clicked_points[i]
+                    if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
+                            self.mouse_dragging = True
+                            is_within_area = True
+                            self.selected_point = i
+                            self.last_mouse_pos = mouse_point
+                            break
         current_text = self.clear_box.currentText()
         if current_text == "current":
                 self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
@@ -78,7 +78,18 @@ class PlotWidget1(PlotWidget):
             self.mouse_dragging = False
             self.selected_point = None
             
-                      
+
+class MousePad(QGraphicsView):
+    def __init__(self):
+        super(MousePad, self).__init__()
+        self.setMouseTracking(True)
+
+    def mouseMoveEvent(self, event):
+        Maestro.track_cursor(event)
+        # Call the base class implementation
+        super().mouseMoveEvent(event)
+
+
 class Ui_Application(object):
     def __init__(self):
         super().__init__()
@@ -1097,7 +1108,7 @@ class Ui_Application(object):
         self.load_button.setObjectName("load_button")
         self.verticalLayout_8.addWidget(self.load_button)
         self.horizontalLayout_22.addLayout(self.verticalLayout_8)
-        self.touch_pad = QtWidgets.QGraphicsView(self.loadingBox)
+        self.touch_pad = MousePad()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
