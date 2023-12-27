@@ -155,6 +155,8 @@ class AppManager:
         self.designed_filter.poles -= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
 
     def track_cursor(self, event):
+        if not self.UI.touch_pad_radioButton.isChecked():
+            return
         # Get the cursor position in view coordinates
         cursor_position = event.pos()
         cursor_y = cursor_position.y()
