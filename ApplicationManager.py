@@ -15,14 +15,24 @@ class AppManager:
 
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
-        for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
-            for point in point_list.copy():  # We create a copy of the list before iterating over it.
-                # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
-                if point.coordinates.real == x_old and point.coordinates.imag == y_old:
-                    point_list.remove(point)
-                    break  # Break the loop since you found and removed the point
+        current_placement = None
+        for element in self.designed_filter.zeros.union(self.designed_filter.poles):
+            if element.coordinates.real == x_old and element.coordinates.imag == y_old:
+                if isinstance(element, Zero):
+                    self.designed_filter.zeros.remove(element)
+                    current_placement = "z"
+                elif isinstance(element, Pole):
+                    self.designed_filter.poles.remove(element)
+                    current_placement = "p"
+                break  # Break the loop since you found and removed the point
+        # for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
+        #     for point in point_list.copy():  # We create a copy of the list before iterating over it.
+        #         # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
+        #         if point.coordinates.real == x_old and point.coordinates.imag == y_old:
+        #             point_list.remove(point)
+        #             break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
-        self.add_zeros_poles(x, y)
+        self.add_zeros_poles(x, y, current_placement)
         
     def plot_unit_circle(self, tab_num : int, filter_number : int = 0):
         theta = np.linspace(0, 2 * np.pi, 100)
@@ -47,8 +57,8 @@ class AppManager:
                              [pole.coordinates.imag for pole in self.Filters[filter_number].poles], pen=None, symbol='x',
                              symbolSize=10)
 
-    def add_zeros_poles(self, x, y):
-        if self.UI.zeros_radioButton.isChecked():
+    def add_zeros_poles(self, x, y, selector = None):
+        if self.UI.zeros_radioButton.isChecked() or selector == "z":
             temp_zero = Zero(x + y * 1j)
             self.designed_filter.add_zero_pole('z', temp_zero)
         else:
