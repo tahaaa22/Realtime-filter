@@ -1,5 +1,6 @@
 from Classes import *
-
+from PyQt5.QtWidgets import QFileDialog
+import wfdb
 # TODO: taha check for repetition after finishing all the todos
 
 class AppManager:
@@ -10,6 +11,7 @@ class AppManager:
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
         self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal)
+        self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal)
 
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
@@ -162,3 +164,19 @@ class AppManager:
         cursor_y = cursor_position.y()
         self.mouse_signal.add_point(cursor_y)
         self.mouse_signal.plot_signal()
+
+    def load_signal(self):
+        self.UI.real_signal.clear()
+        self.UI.filtered_signal.clear()
+        self.loaded_signal.X_Points_Plotted = 0
+        File_Path, _ = QFileDialog.getOpenFileName(None, "Browse Signal", "", "All Files (*)")
+        if File_Path:
+            record_data, record_fields = wfdb.rdsamp(File_Path[:-4], channels=[1])
+            self.loaded_signal.max_freq = int(record_fields['fs'] / 2)
+            self.loaded_signal.duration = record_fields['sig_len'] / record_fields['fs']  # Duration in seconds
+            self.loaded_signal.y_coordinates = list(record_data[:, 0])
+            self.loaded_signal.x_coordinates = np.linspace(0, self.loaded_signal.duration, len(self.loaded_signal.y_coordinates),
+                                                         endpoint=False)
+
+            self.loaded_signal.plot_ECG()
+

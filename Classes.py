@@ -8,6 +8,10 @@ class Signal:
         self.graph1 = real_signal_graph
         self.graph2 = filtered_signal_graph
         self.X_Points_Plotted = 0
+        self.max_freq = None
+        self.duration = None
+        self.timer = None
+        self.data = None
 
     def add_point(self, y):
         self.y_coordinates.append(y)
@@ -21,6 +25,22 @@ class Signal:
             self.graph1.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
         else:
             self.graph1.getViewBox().setXRange(self.x_coordinates[self.X_Points_Plotted - 100], self.x_coordinates[-1])
+
+    def plot_ECG(self):
+        self.graph1.setLimits(xMin=0, xMax=float('inf'))
+        self.data = self.graph1.plot(self.x_coordinates[:1],
+                                                  self.y_coordinates[:1], pen="g")
+
+        self.timer = QTimer()
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.update_plot_data)
+        self.timer.start()
+
+    def update_plot_data(self):
+        #self.graph1.getViewBox().setXRange(self.X_Points_Plotted - 4, self.X_Points_Plotted)
+        self.data.setData(self.x_coordinates[:self.X_Points_Plotted], self.y_coordinates[:self.X_Points_Plotted])
+        self.X_Points_Plotted += 1
+
 
 
 class Filter:

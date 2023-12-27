@@ -1096,7 +1096,7 @@ class Ui_Application(object):
         self.touch_pad_radioButton.setObjectName("touch_pad_radioButton")
         self.horizontalLayout_15.addWidget(self.touch_pad_radioButton)
         self.verticalLayout_8.addLayout(self.horizontalLayout_15)
-        self.load_button = QtWidgets.QPushButton(self.loadingBox)
+        self.load_button = QtWidgets.QPushButton(self.loadingBox, clicked = lambda : Maestro.load_signal())
         self.load_button.setMaximumSize(QtCore.QSize(200, 16777215))
         self.load_button.setStyleSheet("background-color: #784B84;\n"
 "    color: white;\n"
