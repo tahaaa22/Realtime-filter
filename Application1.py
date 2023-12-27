@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget
 import sys
 from ApplicationManager import AppManager
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QGraphicsRectItem
 from pyqtgraph import ScatterPlotItem
 from math import sqrt
 import pyqtgraph as pg
@@ -30,21 +30,21 @@ class PlotWidget1(PlotWidget):
                 # Check if the new point is within the area
                 is_within_area = False
                 for i in range(len(self.clicked_points)):
-                        x_i, y_i = self.clicked_points[i]
-                        if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                                self.mouse_dragging = True
-                                is_within_area = True
-                                self.selected_point = i
-                                self.last_mouse_pos = mouse_point
-                                break
+                    x_i, y_i = self.clicked_points[i]
+                    if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
+                            self.mouse_dragging = True
+                            is_within_area = True
+                            self.selected_point = i
+                            self.last_mouse_pos = mouse_point
+                            break
                 
                 if not is_within_area:
-                        self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
-                        self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
-                        # Create and add the new clicked point
-                        clicked_point = ScatterPlotItem()
-                        clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
-                        self.addItem(clicked_point)
+                    self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
+                    self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
+                    # Create and add the new clicked point
+                    clicked_point = ScatterPlotItem()
+                    clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                    self.addItem(clicked_point)
                                     
         else: # check dragging 
                 self.mouse_dragging = True
@@ -73,7 +73,7 @@ class PlotWidget1(PlotWidget):
             y_old = round(self.last_mouse_pos.y(),1)
             current_position = self.plotItem.vb.mapSceneToView(event.pos())
             self.clicked_points[self.selected_point] = round(current_position.x(),1), round(current_position.y(),1)
-            self.Maestro.set_newCoordinates(self.clicked_points, x_old, y_old, self.clicked_points[self.selected_point])
+            self.Maestro.set_newCoordinates(x_old, y_old, self.clicked_points[self.selected_point])
             self.last_mouse_pos = current_position
 
     def mouseReleaseEvent(self, event):
@@ -81,7 +81,18 @@ class PlotWidget1(PlotWidget):
             self.mouse_dragging = False
             self.selected_point = None
             
-                      
+
+class MousePad(QGraphicsView):
+    def __init__(self):
+        super(MousePad, self).__init__()
+        self.setMouseTracking(True)
+
+    def mouseMoveEvent(self, event):
+        Maestro.track_cursor(event)
+        # Call the base class implementation
+        super().mouseMoveEvent(event)
+
+
 class Ui_Application(object):
     def __init__(self):
         super().__init__()
@@ -840,9 +851,8 @@ class Ui_Application(object):
         self.filter_combobox.addItem("")
         self.filter_combobox.addItem("")
         self.filter_combobox.addItem("")
-        self.filter_combobox.addItem("")
         self.horizontalLayout_18.addWidget(self.filter_combobox)
-        self.add_filter_button = QtWidgets.QPushButton(self.filterBox)
+        self.add_filter_button = QtWidgets.QPushButton(self.filterBox, clicked = lambda: Maestro.add_filter())
         font = QtGui.QFont()
         font.setPointSize(9)
         self.add_filter_button.setFont(font)
@@ -855,7 +865,7 @@ class Ui_Application(object):
 "border-radius: 8px;")
         self.add_filter_button.setObjectName("add_filter_button")
         self.horizontalLayout_18.addWidget(self.add_filter_button)
-        self.delete_filter_button = QtWidgets.QPushButton(self.filterBox)
+        self.delete_filter_button = QtWidgets.QPushButton(self.filterBox, clicked = lambda:Maestro.delete_filter())
         font = QtGui.QFont()
         font.setPointSize(9)
         self.delete_filter_button.setFont(font)
@@ -1089,7 +1099,7 @@ class Ui_Application(object):
         self.touch_pad_radioButton.setObjectName("touch_pad_radioButton")
         self.horizontalLayout_15.addWidget(self.touch_pad_radioButton)
         self.verticalLayout_8.addLayout(self.horizontalLayout_15)
-        self.load_button = QtWidgets.QPushButton(self.loadingBox)
+        self.load_button = QtWidgets.QPushButton(self.loadingBox, clicked = lambda : Maestro.load_signal())
         self.load_button.setMaximumSize(QtCore.QSize(200, 16777215))
         self.load_button.setStyleSheet("background-color: #784B84;\n"
 "    color: white;\n"
@@ -1101,7 +1111,7 @@ class Ui_Application(object):
         self.load_button.setObjectName("load_button")
         self.verticalLayout_8.addWidget(self.load_button)
         self.horizontalLayout_22.addLayout(self.verticalLayout_8)
-        self.touch_pad = QtWidgets.QGraphicsView(self.loadingBox)
+        self.touch_pad = MousePad()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1131,6 +1141,7 @@ class Ui_Application(object):
         self.Clear_combobox.setCurrentIndex(0)
         self.speed_slider.valueChanged['int'].connect(self.speed_LCD.display) # type: ignore
         self.filter_combobox.currentIndexChanged.connect(lambda index: Maestro.display_allpass_filter(index))
+        self.load_radioButton.setChecked(True)
         self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
         QtCore.QMetaObject.connectSlotsByName(Application)
 
@@ -1157,14 +1168,13 @@ class Ui_Application(object):
         self.label_14.setText(_translate("Application", "Z - Pole"))
         self.label_13.setText(_translate("Application", "Phase Response"))
         self.label_16.setText(_translate("Application", "Corrected Phase"))
-        self.custom_filter_text.setPlaceholderText(_translate("Application", "enter arbitary \'a\'"))
+        self.custom_filter_text.setPlaceholderText(_translate("Application", "Enter Pole Coordinates"))
         self.apply_custom_filter.setText(_translate("Application", "Apply"))
         self.label_15.setText(_translate("Application", "Choose Filter:"))
-        self.filter_combobox.setItemText(0, _translate("Application", "0.5 + 0.5j"))
-        self.filter_combobox.setItemText(1, _translate("Application", "-0.5 + 0.5j"))
-        self.filter_combobox.setItemText(2, _translate("Application", "0.5 - 0.5j"))
-        self.filter_combobox.setItemText(3, _translate("Application", "-0.5 - 0.5j"))
-        self.filter_combobox.setItemText(4, _translate("Application", "Custom"))
+        self.filter_combobox.setItemText(0, _translate("Application", "(0.5+0.5j)"))
+        self.filter_combobox.setItemText(1, _translate("Application", "(-0.5+0.5j)"))
+        self.filter_combobox.setItemText(2, _translate("Application", "(0.5-0.5j)"))
+        self.filter_combobox.setItemText(3, _translate("Application", "(-0.5-0.5j)"))
         self.add_filter_button.setText(_translate("Application", "Add"))
         self.delete_filter_button.setText(_translate("Application", "Delete"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.correction_tab), _translate("Application", "Correction"))
