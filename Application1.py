@@ -1143,6 +1143,7 @@ class Ui_Application(object):
         self.filter_combobox.currentIndexChanged.connect(lambda index: Maestro.display_allpass_filter(index))
         self.load_radioButton.setChecked(True)
         self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
+        self.touch_pad_radioButton.toggled.connect(lambda : Maestro.touchpad_toggled())
         QtCore.QMetaObject.connectSlotsByName(Application)
 
     def retranslateUi(self, Application):
