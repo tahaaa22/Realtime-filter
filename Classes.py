@@ -12,8 +12,10 @@ class Signal:
         self.duration = None
         self.timer = None
         self.data = None
+        self.filtered_data = None
         self.filter = filter_obj
         self.filtered_y_coordinates = []
+        self.temporal_resolution = 10
 
     def add_point(self, y):
         self.y_coordinates.append(y)
@@ -23,6 +25,8 @@ class Signal:
     def apply_filter(self):
         if len(self.filter.zeros) == 0 and len(self.filter.poles) == 0:
             return
+        if len(self.x_coordinates) < self.temporal_resolution:
+            return
         self.filtered_y_coordinates = lfilter(np.poly([zero.coordinates for zero in self.filter.zeros]), np.poly([pole.coordinates for pole in self.filter.poles]),
                                               self.y_coordinates)
 
@@ -30,8 +34,8 @@ class Signal:
         self.X_Points_Plotted += 1
         self.graph1.setLimits(xMin = 0, xMax = float('inf'))
         self.graph2.setLimits(xMin = 0, xMax = float('inf'))
-        self.graph1.plot(self.x_coordinates, self.y_coordinates)
-        self.graph2.plot(self.x_coordinates, np.real(self.filtered_y_coordinates))
+        self.graph1.plot(self.x_coordinates, self.y_coordinates, pen='b')
+        self.graph2.plot(self.x_coordinates, np.real(self.filtered_y_coordinates), pen='r')
         if self.X_Points_Plotted < 100:
             self.graph1.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
             self.graph2.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
@@ -42,7 +46,7 @@ class Signal:
     def plot_ECG(self):
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
         self.data = self.graph1.plot(self.x_coordinates[:1],
-                                                  self.y_coordinates[:1], pen="g")
+                                                  self.y_coordinates[:1], pen="b")
         self.timer = QTimer()
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_plot_data)
@@ -52,6 +56,12 @@ class Signal:
         self.data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], self.y_coordinates[:self.X_Points_Plotted + 1])
         self.X_Points_Plotted += 50
         self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
+        if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
+            self.apply_filter()
+            self.filtered_data = self.graph2.plot(self.x_coordinates[:1],
+                                         np.real(self.filtered_y_coordinates[:1]), pen='r')
+            self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
+                                       np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
 
 
 class Filter:

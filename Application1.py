@@ -1144,6 +1144,7 @@ class Ui_Application(object):
         self.load_radioButton.setChecked(True)
         self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
         self.touch_pad_radioButton.toggled.connect(lambda : Maestro.touchpad_toggled())
+        self.speed_slider.valueChanged.connect(lambda value: Maestro.update_temporal_resolution(value))
         QtCore.QMetaObject.connectSlotsByName(Application)
 
     def retranslateUi(self, Application):

@@ -207,3 +207,7 @@ class AppManager:
             self.UI.custom_filter_text.setText("")
         except ValueError:
             print(f"Invalid input {self.UI.custom_filter_text.text()}")
+
+    def update_temporal_resolution(self, value: int):
+        target_signal = self.mouse_signal if self.UI.touch_pad_radioButton.isChecked() else self.loaded_signal
+        target_signal.temporal_resolution = value
