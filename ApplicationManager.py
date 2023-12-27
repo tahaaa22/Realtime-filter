@@ -9,7 +9,7 @@ class AppManager:
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
-        self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal)
+        self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
 
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
