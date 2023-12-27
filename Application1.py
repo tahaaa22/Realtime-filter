@@ -51,6 +51,9 @@ class PlotWidget1(PlotWidget):
                 for i in range(len(self.clicked_points)):
                         x_i, y_i = self.clicked_points[i]
                         if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
+                                clicked_point = ScatterPlotItem()
+                                clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                                self.addItem(clicked_point)
                                 self.mouse_dragging = True
                                 is_within_area = True
                                 self.selected_point = i
