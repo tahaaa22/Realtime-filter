@@ -62,15 +62,15 @@ class Filter:
             self.poles.add(element)
 
     def add_conjugates(self):
-        for pole in self.poles:
+        for pole in self.poles.copy():
             if not pole.has_conjugate:
                 pole.has_conjugate = True
-                pole_conj = Pole(np.conjugate(pole), True)
+                pole_conj = Pole(pole.coordinates.conjugate(), True)
                 self.poles.add(pole_conj)
-        for zero in self.zeros:
+        for zero in self.zeros.copy():
             if not zero.has_conjugate:
                 zero.has_conjugate = True
-                zer_conj = Zero(np.conjugate(zero), True)
+                zer_conj = Zero(zero.coordinates.conjugate(), True)
                 self.zeros.add(zer_conj)
 
     def calculate_frequency_response(self):
