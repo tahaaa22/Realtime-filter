@@ -12,6 +12,8 @@ class AppManager:
         self.custom_allpass_filters = 0
         self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal)
         self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal)
+        self.corrected_phase = None
+        self.corrected_freqs = None
 
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
@@ -105,6 +107,7 @@ class AppManager:
     # noinspection PyBroadException
     def plot_response(self, tab : str, filter_obj : Filter):
         filter_obj.calculate_frequency_response()
+        self.calculate_corrected_phase()
         try :
             if tab == 'D':
                 self.UI.Magnitude_graph.clear()
@@ -128,6 +131,7 @@ class AppManager:
                 self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
                 self.UI.corrected_phase.addLegend()
                 self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
+                self.UI.corrected_phase.plot(self.corrected_freqs, self.corrected_phase)
         except Exception:
             return
 
@@ -144,22 +148,9 @@ class AppManager:
             self.plot_response('D', self.designed_filter)
 
     def add_filter(self):
-        if self.UI.custom_filter_text.text() == "":
-            # Please be advised that | is the symbol for set intersection in python
-            self.designed_filter.zeros |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
-            self.designed_filter.poles |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
-        else:
-            try:
-                # First we obtain the value of the custom pole coordinates and append it in the combobox
-                chosen_a = complex(self.UI.custom_filter_text.text())
-                self.custom_allpass_filters += 1
-                self.UI.filter_combobox.addItem(str(chosen_a))
-                # Secondly we create the filter and append it to Filters list
-                self.Filters.append(Filter(complex(self.UI.custom_filter_text.text())))
-                self.UI.filter_combobox.setCurrentIndex(3 + self.custom_allpass_filters)
-                self.UI.custom_filter_text.setText("")
-            except ValueError:
-                print(f"Invalid input {self.UI.custom_filter_text.text()}")
+        # Please be advised that | is the symbol for set intersection in python
+        self.designed_filter.zeros |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
+        self.designed_filter.poles |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
 
     def delete_filter(self):
         # Please be advised that - is the symbol for set difference in python
@@ -196,3 +187,23 @@ class AppManager:
     def clear_graphs(self):
         self.UI.real_signal.clear()
         self.UI.filtered_signal.clear()
+
+    def calculate_corrected_phase(self):
+        self.corrected_freqs , frequency_response = freqz(np.poly([zero.coordinates for zero in self.designed_filter.zeros
+        | self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros]),
+                                                          np.poly([pole.coordinates for pole in self.designed_filter.poles
+                                                                   | self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles]), worN=8000)
+        self.corrected_phase = np.angle(frequency_response)
+
+    def insert_custom_allpass(self):
+        try:
+            # First we obtain the value of the custom pole coordinates and append it in the combobox
+            chosen_a = complex(self.UI.custom_filter_text.text())
+            self.custom_allpass_filters += 1
+            self.UI.filter_combobox.addItem(str(chosen_a))
+            # Secondly we create the filter and append it to Filters list
+            self.Filters.append(Filter(complex(self.UI.custom_filter_text.text())))
+            self.UI.filter_combobox.setCurrentIndex(3 + self.custom_allpass_filters)
+            self.UI.custom_filter_text.setText("")
+        except ValueError:
+            print(f"Invalid input {self.UI.custom_filter_text.text()}")

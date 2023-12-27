@@ -800,7 +800,7 @@ class Ui_Application(object):
         self.custom_filter_text = QtWidgets.QLineEdit(self.customBox)
         self.custom_filter_text.setObjectName("custom_filter_text")
         self.horizontalLayout_20.addWidget(self.custom_filter_text)
-        self.apply_custom_filter = QtWidgets.QPushButton(self.customBox)
+        self.apply_custom_filter = QtWidgets.QPushButton(self.customBox, clicked = lambda : Maestro.insert_custom_allpass())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
