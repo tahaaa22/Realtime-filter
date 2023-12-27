@@ -1,8 +1,8 @@
 import numpy as np
-from scipy.signal import freqz
+from scipy.signal import freqz, lfilter
 from PyQt5.QtCore import QTimer
 class Signal:
-    def __init__(self, real_signal_graph, filtered_signal_graph):
+    def __init__(self, real_signal_graph, filtered_signal_graph, filter_obj):
         self.y_coordinates = []
         self.x_coordinates = []
         self.graph1 = real_signal_graph
@@ -12,19 +12,32 @@ class Signal:
         self.duration = None
         self.timer = None
         self.data = None
+        self.filter = filter_obj
+        self.filtered_y_coordinates = []
 
     def add_point(self, y):
         self.y_coordinates.append(y)
         self.x_coordinates = np.arange(len(self.y_coordinates))
+        self.apply_filter()
+
+    def apply_filter(self):
+        if len(self.filter.zeros) == 0 and len(self.filter.poles) == 0:
+            return
+        self.filtered_y_coordinates = lfilter(np.poly([zero.coordinates for zero in self.filter.zeros]), np.poly([pole.coordinates for pole in self.filter.poles]),
+                                              self.y_coordinates)
 
     def plot_signal(self):
         self.X_Points_Plotted += 1
         self.graph1.setLimits(xMin = 0, xMax = float('inf'))
+        self.graph2.setLimits(xMin = 0, xMax = float('inf'))
         self.graph1.plot(self.x_coordinates, self.y_coordinates)
+        self.graph2.plot(self.x_coordinates, np.real(self.filtered_y_coordinates))
         if self.X_Points_Plotted < 100:
             self.graph1.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
+            self.graph2.getViewBox().setXRange(self.x_coordinates[0], self.x_coordinates[-1])
         else:
             self.graph1.getViewBox().setXRange(self.x_coordinates[self.X_Points_Plotted - 100], self.x_coordinates[-1])
+            self.graph2.getViewBox().setXRange(self.x_coordinates[self.X_Points_Plotted - 100], self.x_coordinates[-1])
 
     def plot_ECG(self):
         self.graph1.setLimits(xMin=0, xMax=float('inf'))

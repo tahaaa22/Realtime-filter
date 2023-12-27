@@ -10,8 +10,8 @@ class AppManager:
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
-        self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal)
-        self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal)
+        self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
+        self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
         self.corrected_phase = None
         self.corrected_freqs = None
 
@@ -71,7 +71,7 @@ class AppManager:
 
     def add_conjugates(self):
         self.designed_filter.add_conjugates()
-        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
+        self.plot_unit_circle(0)
 
     def clear_placement(self, x = None, y = None, draggable = False):
         # Get the current text of the combo box
