@@ -9,6 +9,8 @@ class AppManager:
         self.Filters = [Filter(), Filter(0.5 + 0.5j), Filter(-0.5 + 0.5j), Filter(0.5 - 0.5j), Filter(-0.5 - 0.5j)]
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
+        self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal)
+
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
         for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
@@ -151,3 +153,12 @@ class AppManager:
         # Please be advised that - is the symbol for set difference in python
         self.designed_filter.zeros -= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
         self.designed_filter.poles -= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
+
+    def track_cursor(self, event):
+        if not self.UI.touch_pad_radioButton.isChecked():
+            return
+        # Get the cursor position in view coordinates
+        cursor_position = event.pos()
+        cursor_y = cursor_position.y()
+        self.mouse_signal.add_point(cursor_y)
+        self.mouse_signal.plot_signal()
