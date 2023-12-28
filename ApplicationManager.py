@@ -1,5 +1,6 @@
 from Classes import *
-
+from PyQt5.QtWidgets import QFileDialog
+import wfdb
 # TODO: taha check for repetition after finishing all the todos
 
 class AppManager:
@@ -10,17 +11,30 @@ class AppManager:
         self.designed_filter = self.Filters[0] # Filter at index 0 will always be the main filter
         self.custom_allpass_filters = 0
         self.mouse_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
+        self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
+        self.corrected_phase = None
+        self.corrected_freqs = None
 
 
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
-        for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
-            for point in point_list.copy():  # We create a copy of the list before iterating over it.
-                # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
-                if point.coordinates.real == x_old and point.coordinates.imag == y_old:
-                    point_list.remove(point)
-                    break  # Break the loop since you found and removed the point
+        current_placement = None
+        for element in self.designed_filter.zeros.union(self.designed_filter.poles):
+            if element.coordinates.real == x_old and element.coordinates.imag == y_old:
+                if isinstance(element, Zero):
+                    self.designed_filter.zeros.remove(element)
+                    current_placement = "z"
+                elif isinstance(element, Pole):
+                    self.designed_filter.poles.remove(element)
+                    current_placement = "p"
+                break  # Break the loop since you found and removed the point
+        # for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
+        #     for point in point_list.copy():  # We create a copy of the list before iterating over it.
+        #         # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
+        #         if point.coordinates.real == x_old and point.coordinates.imag == y_old:
+        #             point_list.remove(point)
+        #             break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
-        self.add_zeros_poles(x, y)
+        self.add_zeros_poles(x, y, current_placement)
         
     def plot_unit_circle(self, tab_num : int, filter_number : int = 0):
         theta = np.linspace(0, 2 * np.pi, 100)
@@ -45,8 +59,8 @@ class AppManager:
                              [pole.coordinates.imag for pole in self.Filters[filter_number].poles], pen=None, symbol='x',
                              symbolSize=10)
 
-    def add_zeros_poles(self, x, y):
-        if self.UI.zeros_radioButton.isChecked():
+    def add_zeros_poles(self, x, y, selector = None):
+        if self.UI.zeros_radioButton.isChecked() or selector == "z":
             temp_zero = Zero(x + y * 1j)
             self.designed_filter.add_zero_pole('z', temp_zero)
         else:
@@ -57,7 +71,7 @@ class AppManager:
 
     def add_conjugates(self):
         self.designed_filter.add_conjugates()
-        self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
+        self.plot_unit_circle(0)
 
     def clear_placement(self, x = None, y = None, draggable = False):
         # Get the current text of the combo box
@@ -93,6 +107,7 @@ class AppManager:
     # noinspection PyBroadException
     def plot_response(self, tab : str, filter_obj : Filter):
         filter_obj.calculate_frequency_response()
+        self.calculate_corrected_phase()
         try :
             if tab == 'D':
                 self.UI.Magnitude_graph.clear()
@@ -116,6 +131,7 @@ class AppManager:
                 self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
                 self.UI.corrected_phase.addLegend()
                 self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
+                self.UI.corrected_phase.plot(self.corrected_freqs, self.corrected_phase)
         except Exception:
             return
 
@@ -132,22 +148,9 @@ class AppManager:
             self.plot_response('D', self.designed_filter)
 
     def add_filter(self):
-        if self.UI.custom_filter_text.text() == "":
-            # Please be advised that | is the symbol for set intersection in python
-            self.designed_filter.zeros |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
-            self.designed_filter.poles |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
-        else:
-            try:
-                # First we obtain the value of the custom pole coordinates and append it in the combobox
-                chosen_a = complex(self.UI.custom_filter_text.text())
-                self.custom_allpass_filters += 1
-                self.UI.filter_combobox.addItem(str(chosen_a))
-                # Secondly we create the filter and append it to Filters list
-                self.Filters.append(Filter(complex(self.UI.custom_filter_text.text())))
-                self.UI.filter_combobox.setCurrentIndex(3 + self.custom_allpass_filters)
-                self.UI.custom_filter_text.setText("")
-            except ValueError:
-                print(f"Invalid input {self.UI.custom_filter_text.text()}")
+        # Please be advised that | is the symbol for set intersection in python
+        self.designed_filter.zeros |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros
+        self.designed_filter.poles |= self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles
 
     def delete_filter(self):
         # Please be advised that - is the symbol for set difference in python
@@ -162,3 +165,49 @@ class AppManager:
         cursor_y = cursor_position.y()
         self.mouse_signal.add_point(cursor_y)
         self.mouse_signal.plot_signal()
+
+    def load_signal(self):
+        self.clear_graphs()
+        self.loaded_signal.X_Points_Plotted = 0
+        File_Path, _ = QFileDialog.getOpenFileName(None, "Browse Signal", "", "All Files (*)")
+        if File_Path:
+            record_data, record_fields = wfdb.rdsamp(File_Path[:-4], channels=[1])
+            self.loaded_signal.max_freq = int(record_fields['fs'] / 2)
+            self.loaded_signal.duration = record_fields['sig_len'] / record_fields['fs']  # Duration in seconds
+            self.loaded_signal.y_coordinates = list(record_data[:, 0])
+            self.loaded_signal.x_coordinates = np.linspace(0, self.loaded_signal.duration, len(self.loaded_signal.y_coordinates),
+                                                         endpoint=False)
+            self.loaded_signal.plot_ECG()
+
+    def touchpad_toggled(self):
+        if self.UI.touch_pad_radioButton.isChecked():
+            self.clear_graphs()
+            self.loaded_signal.timer = None
+
+    def clear_graphs(self):
+        self.UI.real_signal.clear()
+        self.UI.filtered_signal.clear()
+
+    def calculate_corrected_phase(self):
+        self.corrected_freqs , frequency_response = freqz(np.poly([zero.coordinates for zero in self.designed_filter.zeros
+        | self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros]),
+                                                          np.poly([pole.coordinates for pole in self.designed_filter.poles
+                                                                   | self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles]), worN=8000)
+        self.corrected_phase = np.angle(frequency_response)
+
+    def insert_custom_allpass(self):
+        try:
+            # First we obtain the value of the custom pole coordinates and append it in the combobox
+            chosen_a = complex(self.UI.custom_filter_text.text())
+            self.custom_allpass_filters += 1
+            self.UI.filter_combobox.addItem(str(chosen_a))
+            # Secondly we create the filter and append it to Filters list
+            self.Filters.append(Filter(complex(self.UI.custom_filter_text.text())))
+            self.UI.filter_combobox.setCurrentIndex(3 + self.custom_allpass_filters)
+            self.UI.custom_filter_text.setText("")
+        except ValueError:
+            print(f"Invalid input {self.UI.custom_filter_text.text()}")
+
+    def update_temporal_resolution(self, value: int):
+        target_signal = self.mouse_signal if self.UI.touch_pad_radioButton.isChecked() else self.loaded_signal
+        target_signal.temporal_resolution = value

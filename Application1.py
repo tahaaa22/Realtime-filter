@@ -47,15 +47,18 @@ class PlotWidget1(PlotWidget):
                     self.addItem(clicked_point)
                                     
         else: # check dragging 
-            self.mouse_dragging = True
-            for i in range(len(self.clicked_points)):
-                    x_i, y_i = self.clicked_points[i]
-                    if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                            self.mouse_dragging = True
-                            is_within_area = True
-                            self.selected_point = i
-                            self.last_mouse_pos = mouse_point
-                            break
+                self.mouse_dragging = True
+                for i in range(len(self.clicked_points)):
+                        x_i, y_i = self.clicked_points[i]
+                        if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
+                                clicked_point = ScatterPlotItem()
+                                clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                                self.addItem(clicked_point)
+                                self.mouse_dragging = True
+                                is_within_area = True
+                                self.selected_point = i
+                                self.last_mouse_pos = mouse_point
+                                break
         current_text = self.clear_box.currentText()
         if current_text == "current":
                 self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
@@ -797,7 +800,7 @@ class Ui_Application(object):
         self.custom_filter_text = QtWidgets.QLineEdit(self.customBox)
         self.custom_filter_text.setObjectName("custom_filter_text")
         self.horizontalLayout_20.addWidget(self.custom_filter_text)
-        self.apply_custom_filter = QtWidgets.QPushButton(self.customBox)
+        self.apply_custom_filter = QtWidgets.QPushButton(self.customBox, clicked = lambda : Maestro.insert_custom_allpass())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1096,7 +1099,7 @@ class Ui_Application(object):
         self.touch_pad_radioButton.setObjectName("touch_pad_radioButton")
         self.horizontalLayout_15.addWidget(self.touch_pad_radioButton)
         self.verticalLayout_8.addLayout(self.horizontalLayout_15)
-        self.load_button = QtWidgets.QPushButton(self.loadingBox)
+        self.load_button = QtWidgets.QPushButton(self.loadingBox, clicked = lambda : Maestro.load_signal())
         self.load_button.setMaximumSize(QtCore.QSize(200, 16777215))
         self.load_button.setStyleSheet("background-color: #784B84;\n"
 "    color: white;\n"
@@ -1140,6 +1143,8 @@ class Ui_Application(object):
         self.filter_combobox.currentIndexChanged.connect(lambda index: Maestro.display_allpass_filter(index))
         self.load_radioButton.setChecked(True)
         self.tabWidget.currentChanged.connect(lambda index: Maestro.display_tab(index))
+        self.touch_pad_radioButton.toggled.connect(lambda : Maestro.touchpad_toggled())
+        self.speed_slider.valueChanged.connect(lambda value: Maestro.update_temporal_resolution(value))
         QtCore.QMetaObject.connectSlotsByName(Application)
 
     def retranslateUi(self, Application):
