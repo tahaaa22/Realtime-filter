@@ -45,6 +45,8 @@ class Signal:
 
     def plot_ECG(self):
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
+        self.graph2.setLimits(xMin=0, xMax=float('inf'))
+
         self.data = self.graph1.plot(self.x_coordinates[:1],
                                                   self.y_coordinates[:1], pen="b")
         self.timer = QTimer()
@@ -55,13 +57,18 @@ class Signal:
     def update_plot_data(self):
         self.data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], self.y_coordinates[:self.X_Points_Plotted + 1])
         self.X_Points_Plotted += 50
+        x_range_min = max(self.x_coordinates[0:self.X_Points_Plotted + 1]) - 5
+        x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
         self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
-        if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
-            self.apply_filter()
-            self.filtered_data = self.graph2.plot(self.x_coordinates[:1],
-                                         np.real(self.filtered_y_coordinates[:1]), pen='r')
-            self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
-                                       np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
+        if self.X_Points_Plotted < len(self.x_coordinates):
+            if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
+                self.apply_filter()
+                self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
+                self.filtered_data = self.graph2.plot(self.x_coordinates[:1],
+                                            np.real(self.filtered_y_coordinates[:1]), pen='r')
+                self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
+                                        np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
+                
 
 
 class Filter:
