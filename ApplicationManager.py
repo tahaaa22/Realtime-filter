@@ -171,12 +171,12 @@ class AppManager:
         self.loaded_signal.X_Points_Plotted = 0
         File_Path, _ = QFileDialog.getOpenFileName(None, "Browse Signal", "", "All Files (*)")
         if File_Path:
-            record_data, record_fields = wfdb.rdsamp(File_Path[:-4], channels=[1])
-            self.loaded_signal.max_freq = int(record_fields['fs'] / 2)
-            self.loaded_signal.duration = record_fields['sig_len'] / record_fields['fs']  # Duration in seconds
-            self.loaded_signal.y_coordinates = list(record_data[:, 0])
-            self.loaded_signal.x_coordinates = np.linspace(0, self.loaded_signal.duration, len(self.loaded_signal.y_coordinates),
-                                                         endpoint=False)
+            Coordinates_List = ["x", "y", "f"]
+            loaded_data = pd.read_csv(File_Path, usecols=Coordinates_List)
+            self.loaded_signal.x_coordinates = loaded_data["x"]
+            self.loaded_signal.y_coordinates = loaded_data["y"]
+            max_frequency = loaded_data["f"]
+            self.loaded_signal.max_freq = max_frequency[0]
             self.loaded_signal.plot_ECG()
 
     def touchpad_toggled(self):
