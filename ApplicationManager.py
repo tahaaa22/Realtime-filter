@@ -1,6 +1,7 @@
 from Classes import *
 from PyQt5.QtWidgets import QFileDialog
 import wfdb
+import warnings
 # TODO: taha check for repetition after finishing all the todos
 
 class AppManager:
@@ -27,12 +28,6 @@ class AppManager:
                     self.designed_filter.poles.remove(element)
                     current_placement = "p"
                 break  # Break the loop since you found and removed the point
-        # for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
-        #     for point in point_list.copy():  # We create a copy of the list before iterating over it.
-        #         # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
-        #         if point.coordinates.real == x_old and point.coordinates.imag == y_old:
-        #             point_list.remove(point)
-        #             break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
         self.add_zeros_poles(x, y, current_placement)
         
@@ -108,32 +103,28 @@ class AppManager:
     def plot_response(self, tab : str, filter_obj : Filter):
         filter_obj.calculate_frequency_response()
         self.calculate_corrected_phase()
-        try :
+        try:
             if tab == 'D':
-                self.UI.Magnitude_graph.clear()
-                self.UI.Magnitude_graph.setLabel('bottom', 'Frequency', units='Hz')
-                self.UI.Magnitude_graph.setLabel('left', 'Magnitude', units='dB')
-                self.UI.Magnitude_graph.addLegend()
-                self.UI.Phase_graph.clear()
-                self.UI.Phase_graph.setLabel('bottom', 'Frequency', units='Hz')
-                self.UI.Phase_graph.setLabel('left', 'Phase', units='radian')
-                self.UI.Phase_graph.addLegend()
-                self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
+                self.adjust_graphs(self.UI.Magnitude_graph, 'Magnitude', 'dB')
+                self.adjust_graphs(self.UI.Phase_graph, 'Phase', 'radian')
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", RuntimeWarning)
+                    self.UI.Magnitude_graph.plot(filter_obj.frequencies, 20 * np.log10(filter_obj.mag_response))
                 self.UI.Phase_graph.plot(filter_obj.frequencies, filter_obj.phase_response)
-
             else:
-                self.UI.Phase_Response_Graph.clear()
-                self.UI.Phase_Response_Graph.setLabel('bottom', 'Frequency', units='Hz')
-                self.UI.Phase_Response_Graph.setLabel('left', 'Phase', units='radian')
-                self.UI.Phase_Response_Graph.addLegend()
-                self.UI.corrected_phase.clear()
-                self.UI.corrected_phase.setLabel('bottom', 'Frequency', units='Hz')
-                self.UI.corrected_phase.setLabel('left', 'Phase', units='radian')
-                self.UI.corrected_phase.addLegend()
+                self.adjust_graphs(self.UI.Phase_Response_Graph, 'Phase', 'radian')
+                self.adjust_graphs(self.UI.corrected_phase, 'Phase', 'radian')
                 self.UI.Phase_Response_Graph.plot(filter_obj.frequencies, filter_obj.phase_response)
                 self.UI.corrected_phase.plot(self.corrected_freqs, self.corrected_phase)
         except Exception:
             return
+
+    @staticmethod
+    def adjust_graphs(graph, title : str, units : str):
+        graph.clear()
+        graph.setLabel('bottom', 'Frequency', units='Hz')
+        graph.setLabel('left', title, units=units)
+        graph.addLegend()
 
     def display_allpass_filter(self, index : int):
         self.plot_unit_circle(1, index + 1)
