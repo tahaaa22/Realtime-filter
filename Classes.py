@@ -48,6 +48,7 @@ class Signal:
         self.graph2.setLimits(xMin=0, xMax=float('inf'))
         self.data = self.graph1.plot(self.x_coordinates[:1], self.y_coordinates[:1], pen="b")
         self.apply_filter()
+        self.filtered_data = self.graph2.plot(self.x_coordinates, np.real(self.filtered_y_coordinates), pen='r')
         self.timer = QTimer()
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_plot_data)
@@ -60,9 +61,9 @@ class Signal:
         x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
         #self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
         if self.X_Points_Plotted < len(self.x_coordinates):
-            if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
-                self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
-                self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
+        #     if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
+        #         self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
+                # self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
                 self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
 
 
