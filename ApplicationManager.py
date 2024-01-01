@@ -2,7 +2,7 @@ from Classes import *
 from PyQt5.QtWidgets import QFileDialog
 import wfdb
 import warnings
-# TODO: taha check for repetition after finishing all the todos
+
 
 class AppManager:
     def __init__(self, ui):
@@ -159,6 +159,7 @@ class AppManager:
 
     def load_signal(self):
         self.clear_graphs()
+        self.loaded_signal.timer = None
         self.loaded_signal.X_Points_Plotted = 0
         File_Path, _ = QFileDialog.getOpenFileName(None, "Browse Signal", "", "All Files (*)")
         if File_Path:
