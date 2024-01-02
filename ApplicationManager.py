@@ -181,10 +181,12 @@ class AppManager:
         self.UI.filtered_signal.clear()
 
     def calculate_corrected_phase(self):
-        self.corrected_freqs , frequency_response = freqz(np.poly([zero.coordinates for zero in self.designed_filter.zeros
-        | self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros]),
-                                                          np.poly([pole.coordinates for pole in self.designed_filter.poles
-                                                                   | self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles]), worN=8000)
+        combined_zeros = [zero.coordinates for zero in self.designed_filter.zeros
+                                                                   | self.Filters[self.UI.filter_combobox.currentIndex() + 1].zeros]
+        combined_poles = [pole.coordinates for pole in self.designed_filter.poles
+                                                                   | self.Filters[self.UI.filter_combobox.currentIndex() + 1].poles]
+        numerator, denominator = signal.zpk2tf(combined_zeros, combined_poles, 1)
+        self.corrected_freqs , frequency_response = freqz(numerator, denominator, worN=8000)
         self.corrected_phase = np.angle(frequency_response)
 
     def insert_custom_allpass(self):

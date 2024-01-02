@@ -1,5 +1,5 @@
 import numpy as np, pandas as pd
-from scipy.signal import freqz, lfilter
+from scipy.signal import freqz, lfilter, filtfilt
 from scipy import signal
 from PyQt5.QtCore import QTimer
 class Signal:
@@ -20,15 +20,14 @@ class Signal:
     def add_point(self, y):
         self.y_coordinates.append(y)
         self.x_coordinates = np.arange(len(self.y_coordinates))
-        self.apply_filter()
+        #self.apply_filter()
 
-    def apply_filter(self):
+    def apply_filter(self, samples : list):
         if len(self.filter.zeros) == 0 and len(self.filter.poles) == 0:
             return
         if len(self.x_coordinates) < self.temporal_resolution:
             return
-        self.filtered_y_coordinates = lfilter(np.poly([zero.coordinates for zero in self.filter.zeros]), np.poly([pole.coordinates for pole in self.filter.poles]),
-                                              self.y_coordinates)
+        self.filtered_y_coordinates  = filtfilt(self.filter.numerator,  self.filter.denominator, samples)
 
     def plot_signal(self):
         self.X_Points_Plotted += 1
@@ -47,8 +46,8 @@ class Signal:
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
         self.graph2.setLimits(xMin=0, xMax=float('inf'))
         self.data = self.graph1.plot(self.x_coordinates[:1], self.y_coordinates[:1], pen="b")
-        self.apply_filter()
-        self.filtered_data = self.graph2.plot(self.x_coordinates, np.real(self.filtered_y_coordinates), pen='r')
+        #self.apply_filter()
+        self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
         self.timer = QTimer()
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_plot_data)
@@ -56,15 +55,17 @@ class Signal:
 
     def update_plot_data(self):
         self.data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], self.y_coordinates[:self.X_Points_Plotted + 1])
-        self.X_Points_Plotted += 50
-        x_range_min = max(self.x_coordinates[0:self.X_Points_Plotted + 1]) - 5
-        x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
+        # x_range_min = max(self.x_coordinates[0:self.X_Points_Plotted + 1]) - 5
+        # x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
         #self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
-        if self.X_Points_Plotted < len(self.x_coordinates):
+        #if self.X_Points_Plotted < len(self.x_coordinates):
         #     if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
-        #         self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
-                # self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
-                self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
+        #self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
+        if self.X_Points_Plotted >= self.temporal_resolution:
+            self.apply_filter(self.y_coordinates[self.X_Points_Plotted - self.temporal_resolution: self.X_Points_Plotted])
+            self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
+                                       np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
+        self.X_Points_Plotted += 50
 
 
 class Filter:
@@ -80,6 +81,8 @@ class Filter:
         self.phase_response = None
         self.frequencies = None
         self.frequency_response = None
+        self.numerator : list = []
+        self.denominator : list = []
 
     def add_zero_pole(self, char : str, element):
         self.zeros.add(element) if char == 'z' else self.poles.add(element)
@@ -99,7 +102,8 @@ class Filter:
     def calculate_frequency_response(self):
         if len(self.zeros) == 0 and len(self.poles) == 0:
             return
-        self.frequencies, self.frequency_response = freqz(np.poly([zero.coordinates for zero in self.zeros]), np.poly([pole.coordinates for pole in self.poles]), worN=8000)
+        self.numerator, self.denominator = signal.zpk2tf([zero.coordinates for zero in self.zeros], [pole.coordinates for pole in self.poles], 1)
+        self.frequencies, self.frequency_response = freqz(self.numerator, self.denominator)
         self.mag_response = np.abs(self.frequency_response)
         self.phase_response = np.angle(self.frequency_response)
 
