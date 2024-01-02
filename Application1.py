@@ -1032,6 +1032,8 @@ class Ui_Application(object):
         self.speed_slider = QtWidgets.QSlider(self.FilteredBox)
         self.speed_slider.setOrientation(QtCore.Qt.Horizontal)
         self.speed_slider.setObjectName("speed_slider")
+        self.speed_slider.setMinimum(100)
+        self.speed_slider.setMaximum(500)
         self.horizontalLayout_14.addWidget(self.speed_slider)
         self.speed_LCD = QtWidgets.QLCDNumber(self.FilteredBox)
         self.speed_LCD.setObjectName("speed_LCD")

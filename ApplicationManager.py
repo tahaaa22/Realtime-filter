@@ -168,7 +168,7 @@ class AppManager:
             self.loaded_signal.x_coordinates = loaded_data["x"]
             self.loaded_signal.y_coordinates = loaded_data["y"]
             max_frequency = loaded_data["f"]
-            self.loaded_signal.max_freq = max_frequency[0]
+            self.loaded_signal.sampling_rate = max_frequency[0] * 2
             self.loaded_signal.plot_ECG()
 
     def touchpad_toggled(self):
@@ -179,6 +179,8 @@ class AppManager:
     def clear_graphs(self):
         self.UI.real_signal.clear()
         self.UI.filtered_signal.clear()
+        self.loaded_signal.timer = None
+        self.mouse_signal.timer = None
 
     def calculate_corrected_phase(self):
         combined_zeros = [zero.coordinates for zero in self.designed_filter.zeros

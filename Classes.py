@@ -1,5 +1,5 @@
 import numpy as np, pandas as pd
-from scipy.signal import freqz, lfilter, filtfilt
+from scipy.signal import freqz, lfilter, filtfilt, butter, zpk2tf
 from scipy import signal
 from PyQt5.QtCore import QTimer
 class Signal:
@@ -9,7 +9,7 @@ class Signal:
         self.graph1 = real_signal_graph
         self.graph2 = filtered_signal_graph
         self.X_Points_Plotted = 0
-        self.max_freq = None
+        self.sampling_rate = None
         self.timer = None
         self.data = None
         self.filtered_data = None
@@ -20,14 +20,15 @@ class Signal:
     def add_point(self, y):
         self.y_coordinates.append(y)
         self.x_coordinates = np.arange(len(self.y_coordinates))
-        #self.apply_filter()
+        self.apply_filter()
 
-    def apply_filter(self, samples : list):
+    def apply_filter(self):
         if len(self.filter.zeros) == 0 and len(self.filter.poles) == 0:
             return
         if len(self.x_coordinates) < self.temporal_resolution:
             return
-        self.filtered_y_coordinates  = filtfilt(self.filter.numerator,  self.filter.denominator, samples)
+        # numerator, denominator = butter(2, 0.5, 'high', analog=False) # Just for Trial Purpose (Highpass Filter testing)
+        self.filtered_y_coordinates = lfilter(self.filter.numerator, self.filter.denominator, self.y_coordinates)
 
     def plot_signal(self):
         self.X_Points_Plotted += 1
@@ -46,7 +47,7 @@ class Signal:
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
         self.graph2.setLimits(xMin=0, xMax=float('inf'))
         self.data = self.graph1.plot(self.x_coordinates[:1], self.y_coordinates[:1], pen="b")
-        #self.apply_filter()
+        self.apply_filter()
         self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
         self.timer = QTimer()
         self.timer.setInterval(300)
@@ -59,10 +60,8 @@ class Signal:
         # x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
         #self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
         #if self.X_Points_Plotted < len(self.x_coordinates):
-        #     if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
+        if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
         #self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
-        if self.X_Points_Plotted >= self.temporal_resolution:
-            self.apply_filter(self.y_coordinates[self.X_Points_Plotted - self.temporal_resolution: self.X_Points_Plotted])
             self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
                                        np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
         self.X_Points_Plotted += 50
