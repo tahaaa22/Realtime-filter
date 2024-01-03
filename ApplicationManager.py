@@ -231,7 +231,7 @@ class AppManager:
     def touchpad_toggled(self):
         if self.UI.touch_pad_radioButton.isChecked():
             self.clear_graphs()
-            self.loaded_signal.timer = None
+            
 
     def clear_graphs(self):
         self.UI.real_signal.clear()
