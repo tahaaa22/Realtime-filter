@@ -85,7 +85,13 @@ class AppManager:
                              symbolSize=10)
 
     def add_zeros_poles(self, x, y, selector = None, hasConj = None):
-        if self.UI.zeros_radioButton.isChecked() or selector == "z":
+        if selector == None:
+            if self.UI.zeros_radioButton.isChecked():
+                selector = "z"
+            else:
+                selector = "p"
+                
+        if selector == "z":
             temp_zero = Zero(x + y * 1j)
             if hasConj:
                 conjugate = Zero(x - y* 1j)
@@ -123,13 +129,15 @@ class AppManager:
             for zero in self.designed_filter.zeros:
                 if zero.coordinates.real == self.highlightedX and zero.coordinates.imag == self.highlightedY:
                     self.designed_filter.zeros.remove(zero)
-                    self.designed_filter.zeros.remove(zero.conj) #comment lw tele3 kalamk sa7 w doctor 3awezha keda
+                    if zero.has_conjugate:
+                        self.designed_filter.zeros.remove(zero.conj) #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
             # Iterate through the list of poles
             for pole in self.designed_filter.poles:
                 if pole.coordinates.real == self.highlightedX and pole.coordinates.imag == self.highlightedY:
                     self.designed_filter.poles.remove(pole)
-                    self.designed_filter.poles.remove(pole.conj)  #comment lw tele3 kalamk sa7 w doctor 3awezha keda
+                    if pole.has_conjugate:
+                        self.designed_filter.poles.remove(pole.conj)  #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
 
         # dictionary mapping options to lists
