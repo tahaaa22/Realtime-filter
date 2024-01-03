@@ -16,70 +16,63 @@ class PlotWidget1(PlotWidget):
         self.Maestro = None
         self.clear_box = None
         self.clicked_points = []
+        self.addedPoint = None
         self.dragged_point = None 
         self.mouse_dragging = False
         self.last_mouse_pos = None
         self.selected_point = None
-    
+        
+            
     def mousePressEvent(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
                 mouse_point = self.plotItem.vb.mapSceneToView(event.pos())
                 self.cursor_x_coordinates, self.cursor_y_coordinates = round(mouse_point.x(), 1), round(mouse_point.y(), 1)
                 
-        if (self.cursor_x_coordinates, self.cursor_y_coordinates) not in self.clicked_points:
+        if not self.Maestro.isExist(self.cursor_x_coordinates, self.cursor_y_coordinates):
                 # Check if the new point is within the area
-                is_within_area = False
-                for i in range(len(self.clicked_points)):
-                    x_i, y_i = self.clicked_points[i]
-                    if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                            self.mouse_dragging = True
-                            is_within_area = True
-                            self.selected_point = i
-                            self.last_mouse_pos = mouse_point
-                            break
+                is_within_area = self.Maestro.currentPlacement(self.cursor_x_coordinates,self.cursor_y_coordinates)
+                if is_within_area:
+                        self.mouse_dragging = True
+                        self.selected_point = True
+                        self.last_mouse_pos = mouse_point
                 
                 if not is_within_area:
-                    self.clicked_points.append((self.cursor_x_coordinates, self.cursor_y_coordinates))
+                    Maestro.highlightedX = self.cursor_x_coordinates
+                    Maestro.highlightedY = self.cursor_y_coordinates
                     self.Maestro.add_zeros_poles(self.cursor_x_coordinates, self.cursor_y_coordinates)
                     # Create and add the new clicked point
-                    clicked_point = ScatterPlotItem()
-                    clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
-                    self.addItem(clicked_point)
+                    self.addedPoint = ScatterPlotItem()
+                    self.addedPoint.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                    self.addItem(self.addedPoint)
                                     
         else: # check dragging 
                 self.mouse_dragging = True
-                for i in range(len(self.clicked_points)):
-                        x_i, y_i = self.clicked_points[i]
-                        if abs(self.cursor_x_coordinates - x_i) < 0.2 and abs(self.cursor_y_coordinates - y_i) < 0.2:
-                                clicked_point = ScatterPlotItem()
-                                clicked_point.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
-                                self.addItem(clicked_point)
-                                self.mouse_dragging = True
-                                is_within_area = True
-                                self.selected_point = i
-                                self.last_mouse_pos = mouse_point
-                                break
-        current_text = self.clear_box.currentText()
-        if current_text == "current":
-                self.Maestro.clear_placement(self.cursor_x_coordinates, self.cursor_y_coordinates)
-                # Remove the point from clicked_points
-                if (self.cursor_x_coordinates, self.cursor_y_coordinates) in self.clicked_points:
-                        self.clicked_points.remove((self.cursor_x_coordinates, self.cursor_y_coordinates))
+                self.removeItem(self.addedPoint)
+                if (self.Maestro.currentPlacement(self.cursor_x_coordinates,self.cursor_y_coordinates)):
+                        self.addedPoint = ScatterPlotItem()
+                        self.addedPoint.addPoints(x=[self.cursor_x_coordinates], y=[self.cursor_y_coordinates], brush='r')
+                        self.addItem(self.addedPoint)
+                        Maestro.highlightedX = self.cursor_x_coordinates
+                        Maestro.highlightedY = self.cursor_y_coordinates
+                        self.mouse_dragging = True
+                        is_within_area = True
+                        self.selected_point = True
+                        self.last_mouse_pos = mouse_point
                 
     def mouseMoveEvent(self, event):
-        if self.mouse_dragging and self.selected_point is not None:
+        if self.mouse_dragging and self.selected_point:
             # Update the selected point's coordinates
             x_old = round(self.last_mouse_pos.x(), 1)
             y_old = round(self.last_mouse_pos.y(),1)
             current_position = self.plotItem.vb.mapSceneToView(event.pos())
-            self.clicked_points[self.selected_point] = round(current_position.x(),1), round(current_position.y(),1)
-            self.Maestro.set_newCoordinates(x_old, y_old, self.clicked_points[self.selected_point])
+            self.clicked_points = round(current_position.x(),1), round(current_position.y(),1)
+            self.Maestro.set_newCoordinates(x_old, y_old, self.clicked_points)
             self.last_mouse_pos = current_position
 
     def mouseReleaseEvent(self, event):
         if event.button() == pg.QtCore.Qt.LeftButton:
             self.mouse_dragging = False
-            self.selected_point = None
+            self.selected_point = False
             
 
 class MousePad(QGraphicsView):
@@ -350,8 +343,6 @@ class Ui_Application(object):
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.z_plane = PlotWidget1(self.Zplane_box)
-        # plotitem = self.z_plane.getPlotItem()
-        # plotitem.scene().sigMouseClicked.connect(lambda event, item=plotitem : self.z_plane.on_click(event, item))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -472,14 +463,12 @@ class Ui_Application(object):
         self.label_9 = QtWidgets.QLabel(self.groupbox1)
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_8.addWidget(self.label_9)
-        self.add_conjugates = QtWidgets.QPushButton(self.groupbox1)
-        self.add_conjugates.setStyleSheet("background-color: #00A86B;\n"
-"    color: white;\n"
-"    border: none;\n"
-"    padding: 5px 10px;\n"
-"     border: 1.2px ;\n"
-"border-style: outset;\n"
-"border-radius: 8px;")
+        self.add_conjugates = QtWidgets.QCheckBox(self.groupbox1)
+        self.add_conjugates.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.add_conjugates.setFont(font)
+        self.add_conjugates.setStyleSheet("")
         self.add_conjugates.setObjectName("add_conjugates")
         self.horizontalLayout_8.addWidget(self.add_conjugates)
         self.gridLayout_9.addWidget(self.groupbox1, 3, 0, 1, 1)
@@ -1158,14 +1147,14 @@ class Ui_Application(object):
         self.zeros_radioButton.setText(_translate("Application", "Zeros"))
         self.pole_radioButton.setText(_translate("Application", "Poles"))
         self.label_6.setText(_translate("Application", "Clear:"))
-        self.Clear_combobox.setCurrentText(_translate("Application", "all zeros"))
-        self.Clear_combobox.setItemText(0, _translate("Application", "all zeros"))
-        self.Clear_combobox.setItemText(1, _translate("Application", "all poles"))
-        self.Clear_combobox.setItemText(2, _translate("Application", "all"))
-        self.Clear_combobox.setItemText(3, _translate("Application", "current"))
+        self.Clear_combobox.setCurrentText(_translate("Application", "current"))
+        self.Clear_combobox.setItemText(0, _translate("Application", "current"))
+        self.Clear_combobox.setItemText(1, _translate("Application", "all zeros"))
+        self.Clear_combobox.setItemText(2, _translate("Application", "all poles"))
+        self.Clear_combobox.setItemText(3, _translate("Application", "all"))
         self.confirm_button.setText(_translate("Application", "Confirm"))
         self.label_9.setText(_translate("Application", "Conjugates:"))
-        self.add_conjugates.setText(_translate("Application", "Add"))
+        self.add_conjugates.setText(_translate("Application", "conjugate"))
         self.magBox.setTitle(_translate("Application", "Magnitude Response"))
         self.phasebox.setTitle(_translate("Application", "Phase Response"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.design_tab), _translate("Application", "Design"))
@@ -1197,6 +1186,7 @@ if __name__ == "__main__":
     ui = Ui_Application()
     ui.setupUi(Application)
     Maestro = AppManager(ui)
+    Maestro.highlighted_point = ui.z_plane.addedPoint
     ui.z_plane.Maestro = Maestro
     ui.z_plane.clear_box = ui.Clear_combobox
     Maestro.plot_unit_circle(0)
