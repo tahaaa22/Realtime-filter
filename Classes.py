@@ -78,23 +78,28 @@ class Filter:
         self.frequencies = None
         self.frequency_response = None
 
+    
     def add_zero_pole(self, char : str, element):
         if char == 'z':
             self.zeros.add(element)
         else:
             self.poles.add(element)
 
-    def add_conjugates(self):
+    def add_conjugates(self, highlighted_x, highlighted_y):
         for pole in self.poles.copy():
-            if not pole.has_conjugate:
+            if not pole.has_conjugate and pole.coordinates.real == highlighted_x and pole.coordinates.imag == highlighted_y:
                 pole.has_conjugate = True
                 pole_conj = Pole(pole.coordinates.conjugate(), True)
+                pole.conj = pole_conj
                 self.poles.add(pole_conj)
+                pass
         for zero in self.zeros.copy():
-            if not zero.has_conjugate:
+            if not zero.has_conjugate and zero.coordinates.real == highlighted_x and zero.coordinates.imag == highlighted_y:
                 zero.has_conjugate = True
                 zer_conj = Zero(zero.coordinates.conjugate(), True)
+                zero.conj = zer_conj
                 self.zeros.add(zer_conj)
+                pass
 
     def calculate_frequency_response(self):
         if len(self.zeros) == 0 and len(self.poles) == 0:
@@ -107,8 +112,10 @@ class Zero:
     def __init__(self, coordinates : complex, conj : bool = False):
         self.coordinates = coordinates
         self.has_conjugate= conj
+        self.conj = None
     
 class Pole:
     def __init__(self, coordinates : complex, conj : bool = False):
         self.coordinates = coordinates
         self.has_conjugate= conj
+        self.conj = None

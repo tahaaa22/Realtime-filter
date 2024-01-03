@@ -14,28 +14,52 @@ class AppManager:
         self.loaded_signal = Signal(ui.real_signal, ui.filtered_signal, self.designed_filter)
         self.corrected_phase = None
         self.corrected_freqs = None
-
-
+        self.highlightedX = None
+        self.highlightedY = None
+    
+    
+    def currentPlacement(self, x,y):
+        current_list = list(self.designed_filter.zeros.union(self.designed_filter.poles))
+        for i in range(self.update_lists()):
+            x_i, y_i = current_list[i].coordinates.real, current_list[i].coordinates.imag
+            if abs(x - x_i) < 0.1 and abs(y- y_i) < 0.1:
+                if current_list[i].has_conjugate:
+                    self.UI.add_conjugates.setChecked(True)
+                else:
+                    self.UI.add_conjugates.setChecked(False)
+                return True
+        return False        
+                    
+    def update_lists(self):
+        return len(self.designed_filter.zeros) + len(self.designed_filter.poles)
+    
+    def isExist(self, x, y):
+        for element in self.designed_filter.zeros.union(self.designed_filter.poles):
+            if element.coordinates.real == x and element.coordinates.imag == y:
+                return True
+        return False
+    
+            
     def set_newCoordinates(self, x_old, y_old, new_placement_tuple):
         current_placement = None
         for element in self.designed_filter.zeros.union(self.designed_filter.poles):
             if element.coordinates.real == x_old and element.coordinates.imag == y_old:
                 if isinstance(element, Zero):
+                    if element.has_conjugate:
+                        self.designed_filter.zeros.remove(element.conj)
                     self.designed_filter.zeros.remove(element)
+                    Hasconj = element.has_conjugate
                     current_placement = "z"
                 elif isinstance(element, Pole):
+                    if element.has_conjugate:
+                        self.designed_filter.poles.remove(element.conj)
                     self.designed_filter.poles.remove(element)
+                    Hasconj = element.has_conjugate
                     current_placement = "p"
                 break  # Break the loop since you found and removed the point
-        # for point_list in [self.designed_filter.zeros, self.designed_filter.poles]:
-        #     for point in point_list.copy():  # We create a copy of the list before iterating over it.
-        #         # This is important because you should not modify a list while iterating over it, as it may lead to unexpected behavior
-        #         if point.coordinates.real == x_old and point.coordinates.imag == y_old:
-        #             point_list.remove(point)
-        #             break  # Break the loop since you found and removed the point
         x,y = new_placement_tuple
-        self.add_zeros_poles(x, y, current_placement)
-        
+        self.add_zeros_poles(x, y, current_placement, Hasconj)
+
     def plot_unit_circle(self, tab_num : int, filter_number : int = 0):
         theta = np.linspace(0, 2 * np.pi, 100)
         x = np.cos(theta)
@@ -59,33 +83,52 @@ class AppManager:
                              [pole.coordinates.imag for pole in self.Filters[filter_number].poles], pen=None, symbol='x',
                              symbolSize=10)
 
-    def add_zeros_poles(self, x, y, selector = None):
+    def add_zeros_poles(self, x, y, selector = None, hasConj = None):
         if self.UI.zeros_radioButton.isChecked() or selector == "z":
             temp_zero = Zero(x + y * 1j)
+            if hasConj:
+                conjugate = Zero(x - y* 1j)
+                conjugate.has_conjugate = True
+                temp_zero.conj = conjugate
+                conjugate.conj = temp_zero
+                self.designed_filter.add_zero_pole('z', conjugate)
+                #self.Control_Conj(x, y , selector) # there is a better and professional way for this, which is by applying deep copying
+                temp_zero.has_conjugate = True
             self.designed_filter.add_zero_pole('z', temp_zero)
         else:
             temp_pole = Pole(x + y * 1j)
             self.designed_filter.add_zero_pole('p', temp_pole)
-
+            if hasConj:
+                conjugate = Pole(x - y* 1j)
+                conjugate.has_conjugate = True
+                temp_pole.conj = conjugate
+                conjugate.conj = temp_pole
+                self.designed_filter.add_zero_pole('p', conjugate)
+                #self.Control_Conj(x, y , selector) # there is a better and professional way for this, which is by applying deep copying
+                temp_pole.has_conjugate = True
+       
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def add_conjugates(self):
-        self.designed_filter.add_conjugates()
-        self.plot_unit_circle(0)
+        if self.UI.add_conjugates.isChecked():
+            self.designed_filter.add_conjugates(self.highlightedX, self.highlightedY)
+            self.plot_unit_circle(0)
 
     def clear_placement(self, x = None, y = None, draggable = False):
         # Get the current text of the combo box
         current_text = self.UI.Clear_combobox.currentText()
-        if current_text == "current" or draggable:
+        if current_text == "current":
             # Iterate through the list of zeros
             for zero in self.designed_filter.zeros:
-                if zero.coordinates.real == x and zero.coordinates.imag == y:
+                if zero.coordinates.real == self.highlightedX and zero.coordinates.imag == self.highlightedY:
                     self.designed_filter.zeros.remove(zero)
+                    self.designed_filter.zeros.remove(zero.conj) #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
             # Iterate through the list of poles
             for pole in self.designed_filter.poles:
-                if pole.coordinates.real == x and pole.coordinates.imag == y:
+                if pole.coordinates.real == self.highlightedX and pole.coordinates.imag == self.highlightedY:
                     self.designed_filter.poles.remove(pole)
+                    self.designed_filter.poles.remove(pole.conj)  #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
 
         # dictionary mapping options to lists
