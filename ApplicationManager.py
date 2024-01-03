@@ -85,7 +85,13 @@ class AppManager:
                              symbolSize=10)
 
     def add_zeros_poles(self, x, y, selector = None, hasConj = None):
-        if self.UI.zeros_radioButton.isChecked() or selector == "z":
+        if selector == None:
+            if self.UI.zeros_radioButton.isChecked():
+                selector = "z"
+            else:
+                selector = "p"
+                
+        if selector == "z":
             temp_zero = Zero(x + y * 1j)
             if hasConj:
                 conjugate = Zero(x - y* 1j)
@@ -107,7 +113,7 @@ class AppManager:
                 self.designed_filter.add_zero_pole('p', conjugate)
                 #self.Control_Conj(x, y , selector) # there is a better and professional way for this, which is by applying deep copying
                 temp_pole.has_conjugate = True
-       
+        self.add_conjugates()
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def add_conjugates(self):
@@ -123,13 +129,15 @@ class AppManager:
             for zero in self.designed_filter.zeros:
                 if zero.coordinates.real == self.highlightedX and zero.coordinates.imag == self.highlightedY:
                     self.designed_filter.zeros.remove(zero)
-                    self.designed_filter.zeros.remove(zero.conj) #comment lw tele3 kalamk sa7 w doctor 3awezha keda
+                    if zero.has_conjugate:
+                        self.designed_filter.zeros.remove(zero.conj) #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
             # Iterate through the list of poles
             for pole in self.designed_filter.poles:
                 if pole.coordinates.real == self.highlightedX and pole.coordinates.imag == self.highlightedY:
                     self.designed_filter.poles.remove(pole)
-                    self.designed_filter.poles.remove(pole.conj)  #comment lw tele3 kalamk sa7 w doctor 3awezha keda
+                    if pole.has_conjugate:
+                        self.designed_filter.poles.remove(pole.conj)  #comment lw tele3 kalamk sa7 w doctor 3awezha keda
                     break  # Break the loop since you found and removed the point
 
         # dictionary mapping options to lists
