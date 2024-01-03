@@ -1,5 +1,6 @@
-import numpy as np
+import numpy as np, pandas as pd
 from scipy.signal import freqz, lfilter
+from scipy import signal
 from PyQt5.QtCore import QTimer
 class Signal:
     def __init__(self, real_signal_graph, filtered_signal_graph, filter_obj):
@@ -9,7 +10,6 @@ class Signal:
         self.graph2 = filtered_signal_graph
         self.X_Points_Plotted = 0
         self.max_freq = None
-        self.duration = None
         self.timer = None
         self.data = None
         self.filtered_data = None
@@ -45,8 +45,9 @@ class Signal:
 
     def plot_ECG(self):
         self.graph1.setLimits(xMin=0, xMax=float('inf'))
-        self.data = self.graph1.plot(self.x_coordinates[:1],
-                                                  self.y_coordinates[:1], pen="b")
+        self.graph2.setLimits(xMin=0, xMax=float('inf'))
+        self.data = self.graph1.plot(self.x_coordinates[:1], self.y_coordinates[:1], pen="b")
+        self.apply_filter()
         self.timer = QTimer()
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_plot_data)
@@ -55,13 +56,14 @@ class Signal:
     def update_plot_data(self):
         self.data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], self.y_coordinates[:self.X_Points_Plotted + 1])
         self.X_Points_Plotted += 50
-        self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
-        if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
-            self.apply_filter()
-            self.filtered_data = self.graph2.plot(self.x_coordinates[:1],
-                                         np.real(self.filtered_y_coordinates[:1]), pen='r')
-            self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1],
-                                       np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
+        x_range_min = max(self.x_coordinates[0:self.X_Points_Plotted + 1]) - 5
+        x_range_max = max(self.x_coordinates[0:self.X_Points_Plotted + 1])
+        #self.graph1.getViewBox().setXRange(max(self.x_coordinates[0: self.X_Points_Plotted + 1]) - 5, max(self.x_coordinates[0: self.X_Points_Plotted + 1]))
+        if self.X_Points_Plotted < len(self.x_coordinates):
+            if self.x_coordinates[self.X_Points_Plotted] >= self.temporal_resolution:
+                self.graph2.getViewBox().setXRange(x_range_min, x_range_max)
+                self.filtered_data = self.graph2.plot(self.x_coordinates[:1], np.real(self.filtered_y_coordinates[:1]), pen='r')
+                self.filtered_data.setData(self.x_coordinates[:self.X_Points_Plotted + 1], np.real(self.filtered_y_coordinates[:self.X_Points_Plotted + 1]))
 
 
 class Filter:
@@ -80,10 +82,7 @@ class Filter:
 
     
     def add_zero_pole(self, char : str, element):
-        if char == 'z':
-            self.zeros.add(element)
-        else:
-            self.poles.add(element)
+        self.zeros.add(element) if char == 'z' else self.poles.add(element)
 
     def add_conjugates(self, highlighted_x, highlighted_y):
         for pole in self.poles.copy():
