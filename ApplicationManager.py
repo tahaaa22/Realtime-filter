@@ -113,7 +113,7 @@ class AppManager:
                 self.designed_filter.add_zero_pole('p', conjugate)
                 #self.Control_Conj(x, y , selector) # there is a better and professional way for this, which is by applying deep copying
                 temp_pole.has_conjugate = True
-       
+        self.add_conjugates()
         self.plot_unit_circle(0) # added 0 for testing remove it if it is wrong
 
     def add_conjugates(self):
