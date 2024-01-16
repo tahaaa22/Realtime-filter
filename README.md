@@ -4,7 +4,7 @@ This desktop application provides a user-friendly interface for designing custom
 
 ## Demo
 
-![Demo](https://github.com/tahaa/Signal-Viewer/assets/66066832/c8f3f5f6-2541-4c2c-b690-8273ab251242)
+![Demo](demo.gif)
 
 
 ## Running the Application
