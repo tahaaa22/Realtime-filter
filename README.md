@@ -4,7 +4,7 @@ This desktop application provides a user-friendly interface for designing custom
 
 ## Demo
 
-![Demo](demo.gif)
+![Demo](Demo.gif)
 
 
 ## Running the Application
