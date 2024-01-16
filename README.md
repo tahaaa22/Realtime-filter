@@ -22,7 +22,7 @@ pip install scipy
 4. Run the application script:
 
 ```bash
-python filter_design_app.py
+python Application1.py
 ```
 
 The application window will appear, providing access to the various design and visualization features.
