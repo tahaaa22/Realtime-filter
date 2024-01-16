@@ -4,16 +4,7 @@ This desktop application provides a user-friendly interface for designing custom
 
 ## Demo
 
-To explore the functionality of the Realtime Digital Filter Design Application, refer to the following examples:
-
-1. **Pole-Zero Placement Example**
-   - Visit [Pole-Zero Placement Example](https://www.earlevel.com/main/2013/10/28/pole-zero-placement-v2/) for an illustration of interactive placement of zeros and poles on the z-plane.
-
-2. **Filter Frequency Response Grapher Example**
-   - Explore [Filter Frequency Response Grapher Example](https://www.earlevel.com/main/2016/12/08/filter-frequency-response-grapher/) for insights into visualizing frequency responses based on filter designs.
-   
-
-Uploading Untitled video - Made with Clipchamp (3).mp4…
+[![Video Demo](https://img.youtube.com/vi/1GRbL7cj6hM/0.jpg)](https://www.youtube.com/watch?v=1GRbL7cj6hM)
 
 
 ## Running the Application
