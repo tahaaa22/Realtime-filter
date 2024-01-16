@@ -21,7 +21,7 @@ To run the application, follow these steps:
 3. Install the required dependencies by running the following command in your terminal or command prompt:
 
 ```bash
-pip install -r requirements.txt
+pip install scipy
 ```
 
 4. Run the application script:
