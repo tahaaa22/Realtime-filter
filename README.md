@@ -12,6 +12,10 @@ To explore the functionality of the Realtime Digital Filter Design Application, 
 2. **Filter Frequency Response Grapher Example**
    - Explore [Filter Frequency Response Grapher Example](https://www.earlevel.com/main/2016/12/08/filter-frequency-response-grapher/) for insights into visualizing frequency responses based on filter designs.
    
+
+Uploading Untitled video - Made with Clipchamp (3).mp4…
+
+
 ## Running the Application
 
 To run the application, follow these steps:
